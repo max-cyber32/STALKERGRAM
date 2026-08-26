@@ -2,17 +2,24 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>STALKER.GRAM PDA</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --pda-bg: #0c100c;
+            --pda-bg: #070a07;
             --pda-green: #00ff66;
-            --pda-dark-green: #101c10;
-            --pda-gold: #e6c875;
-            --pda-text-gray: #a0a8a0;
+            --pda-dark-green: #0a180a;
+            --pda-gold: #ffcc00;
+            --pda-orange: #ff9900;
+            --pda-text-gray: #8a968a;
             --pda-border: #1a331a;
+            --pda-panel-bg: #0c140c;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
         }
 
         body {
@@ -21,175 +28,214 @@
             font-family: 'Courier New', monospace;
             margin: 0;
             padding: 0;
-            padding-bottom: 60px;
-            user-select: none;
+            padding-bottom: 75px;
+        }
+
+        /* Декоративные саморезы/болты */
+        .screw {
+            width: 8px;
+            height: 8px;
+            background: #2a3a2a;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: inset 1px 1px 1px #000, 0 0 2px #000;
+            position: relative;
+        }
+        .screw::before {
+            content: '';
+            position: absolute;
+            top: 3px; left: 1px; width: 6px; height: 2px;
+            background: #111;
         }
 
         /* Шапка КПК */
         .pda-header {
-            background: #050805;
+            background: #040604;
             border-bottom: 2px solid var(--pda-border);
-            padding: 10px;
-            text-align: center;
-            color: var(--pda-gold);
-            font-weight: bold;
-            letter-spacing: 1px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.8);
         }
 
-        /* Навигационная панель снизу */
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .rad-icon {
+            background: var(--pda-gold);
+            color: #000;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 0 6px rgba(255, 204, 0, 0.4);
+        }
+
+        .signal-badge {
+            font-size: 10px;
+            color: var(--pda-green);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #002200;
+            padding: 3px 8px;
+            border: 1px solid #004400;
+            border-radius: 4px;
+        }
+
+        .signal-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--pda-green);
+            border-radius: 50%;
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        /* Навигация (приподнята вверх) */
         .pda-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 55px;
-            background: #050805;
-            border-top: 2px solid var(--pda-border);
+            bottom: 8px;
+            left: 8px;
+            right: 8px;
+            height: 58px;
+            background: #050905;
+            border: 2px solid var(--pda-border);
+            border-radius: 8px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            z-index: 100;
+            z-index: 1000;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.9);
+            padding: 0 4px;
         }
 
         .nav-btn {
             background: transparent;
             border: 1px solid transparent;
             color: var(--pda-text-gray);
-            font-size: 11px;
-            padding: 6px;
+            font-size: 10px;
+            padding: 6px 2px;
             border-radius: 4px;
             cursor: pointer;
             text-align: center;
             flex: 1;
+            font-family: inherit;
+            font-weight: bold;
         }
 
         .nav-btn.active {
             color: var(--pda-green);
             border-color: var(--pda-green);
             background: var(--pda-dark-green);
+            box-shadow: 0 0 8px rgba(0,255,102,0.2);
         }
 
-        /* Контейнер вкладок */
+        /* Контейнеры Вкладок */
         .tab-content {
             display: none;
-            padding: 12px;
+            padding: 10px;
         }
-
         .tab-content.active {
             display: block;
         }
 
-        /* Стиль карточки "Досье" (По мотивам оригинального КПК) */
-        .dossier-card {
-            background: #080d08;
-            border: 2px solid #223d22;
+        /* Карточка с крепежом (саморезами) */
+        .bolted-panel {
+            background: var(--pda-panel-bg);
+            border: 2px solid var(--pda-border);
             border-radius: 6px;
             padding: 12px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-        }
-
-        .dossier-top {
-            display: flex;
-            gap: 12px;
-            border-bottom: 1px dashed var(--pda-border);
-            padding-bottom: 12px;
+            position: relative;
             margin-bottom: 12px;
         }
 
-        .avatar-box {
-            width: 90px;
-            height: 110px;
-            border: 1px solid var(--pda-green);
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
+        .bolted-panel .screw-tl { position: absolute; top: 4px; left: 4px; }
+        .bolted-panel .screw-tr { position: absolute; top: 4px; right: 4px; }
+        .bolted-panel .screw-bl { position: absolute; bottom: 4px; left: 4px; }
+        .bolted-panel .screw-br { position: absolute; bottom: 4px; right: 4px; }
 
-        .avatar-box::after {
-            content: "ИЗМЕНИТЬ";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: var(--pda-green);
-            font-size: 9px;
+        /* Экраны Входа / Регистрации */
+        .auth-container {
             text-align: center;
-            padding: 2px;
+            padding: 30px 15px;
         }
 
-        .user-info {
-            font-size: 13px;
+        .pda-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--pda-green);
+            color: var(--pda-green);
+            padding: 10px;
+            font-family: inherit;
+            margin: 10px 0;
+            border-radius: 4px;
+            outline: none;
         }
 
-        .user-info .name {
-            font-size: 18px;
-            color: #fff;
+        .btn-pda {
+            background: var(--pda-dark-green);
+            border: 1px solid var(--pda-green);
+            color: var(--pda-green);
+            padding: 10px 14px;
+            width: 100%;
+            font-family: inherit;
             font-weight: bold;
-            margin-bottom: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .btn-pda:active {
+            background: var(--pda-green);
+            color: #000;
         }
 
-        .info-row {
-            margin: 4px 0;
-            color: var(--pda-text-gray);
-        }
-
-        .info-row span {
-            color: #fff;
-        }
-
-        /* Раздел Статистика */
-        .stats-title {
-            color: var(--pda-gold);
-            font-size: 16px;
-            font-weight: bold;
-            margin: 12px 0 8px 0;
-            border-bottom: 1px solid var(--pda-border);
-            padding-bottom: 4px;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-            border-bottom: 1px solid #101810;
-            font-size: 13px;
-        }
-
-        /* Пост в Общем канале */
+        /* Посты и Комментарии (Малявы) */
         .post-card {
             background: #090f09;
             border: 1px solid var(--pda-border);
             border-radius: 6px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             overflow: hidden;
         }
 
         .post-header {
-            padding: 8px 12px;
-            background: #050805;
+            padding: 8px 10px;
+            background: #040704;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
+            border-bottom: 1px solid var(--pda-border);
         }
 
         .post-img {
             width: 100%;
-            max-height: 350px;
+            max-height: 320px;
             object-fit: cover;
             display: block;
         }
 
         .post-actions {
-            padding: 8px 12px;
+            padding: 8px;
             display: flex;
-            gap: 15px;
-            background: #050805;
+            gap: 12px;
+            background: #040704;
             border-top: 1px solid var(--pda-border);
         }
 
@@ -199,169 +245,400 @@
             color: var(--pda-text-gray);
             cursor: pointer;
             font-family: inherit;
+            font-size: 11px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
+        }
+        .action-btn.active { color: var(--pda-gold); }
+
+        .comments-section {
+            background: #050805;
+            border-top: 1px dashed var(--pda-border);
+            padding: 8px 10px;
+            display: none;
+        }
+        .comment-item {
+            font-size: 11px;
+            margin-bottom: 6px;
+            border-bottom: 1px dotted #152515;
+            padding-bottom: 4px;
         }
 
-        .action-btn.active {
-            color: var(--pda-green);
-        }
-
-        /* Кнопка действия */
-        .btn-pda-action {
-            background: var(--pda-dark-green);
-            border: 1px solid var(--pda-green);
-            color: var(--pda-green);
-            padding: 10px;
-            width: 100%;
-            font-family: inherit;
-            font-weight: bold;
+        /* Элемент Поиска Людей */
+        .user-search-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid var(--pda-border);
+            background: #070d07;
+            margin-bottom: 6px;
             border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
+        }
+
+        /* Панель Главного Админа */
+        .admin-panel {
+            border: 2px solid var(--pda-gold);
+            background: #121000;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Шапка КПК -->
+    <!-- ВЕРХНЯЯ ШАПКА КПК -->
     <div class="pda-header">
-        <span>📟 STALKER.GRAM</span>
-        <span style="font-size: 11px; color: var(--pda-green);">● В СЕТИ ЧЗО</span>
+        <div class="header-title">
+            <div class="rad-icon">☢</div>
+            <span>STALKER.GRAM</span>
+        </div>
+        <div class="signal-badge">
+            <div class="signal-dot"></div>
+            <span id="lang-signal">СИГНАЛ ЛОВИТ</span>
+        </div>
     </div>
 
-    <!-- ВКЛАДКА 1: ОБЩИЙ КАНАЛ (Лента) -->
-    <div id="feed-tab" class="tab-content active">
+    <!-- 0. ЭКРАН РЕГИСТРАЦИИ И ВХОДА -->
+    <div id="auth-screen" class="tab-content active">
+        <div class="bolted-panel auth-container">
+            <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
+            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
+            
+            <h3 style="color: var(--pda-gold); margin-top: 0;">📟 ИНДЕНТИФИКАЦИЯ КПК</h3>
+            <p style="font-size: 11px; color: var(--pda-text-gray);">Введи свой уникальный позывной для входа в сеть ЧЗО:</p>
+            
+            <input type="text" id="callsign-input" class="pda-input" placeholder="Позывной (например: Меченый)" maxlength="20">
+            <div id="auth-error" style="color: #ff4444; font-size: 11px; display: none; margin-bottom: 8px;"></div>
+            
+            <button class="btn-pda" onclick="registerUser()">ВОЙТИ В СЕТЬ</button>
+        </div>
+    </div>
+
+    <!-- 1. ОБЩИЙ КАНАЛ (ЛЕНТА) -->
+    <div id="feed-tab" class="tab-content">
+        <div class="bolted-panel" style="padding: 6px 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
+            <span style="font-size: 11px; color: var(--pda-gold);">📡 ЛЕНТА ВЫЛАЗОК</span>
+            <button class="btn-pda" style="width: auto; padding: 4px 8px; font-size: 10px; margin:0;" onclick="switchTab('create-post')">📸 ВЫЛАЗКА</button>
+        </div>
+
         <div id="posts-container">
-            <!-- Пример поста -->
+            <!-- Пример поста в ленте -->
             <div class="post-card">
                 <div class="post-header">
-                    <span style="color: var(--pda-gold);">[Одиночка]</span> Меченый
+                    <span><b>Меченый</b> <small style="color:var(--pda-text-gray)">[Одиночка]</small></span>
+                    <small style="color:var(--pda-text-gray)">12:40</small>
                 </div>
-                <img src="https://via.placeholder.com/400x250/112211/00ff66?text=Вылазка+на+Кордон" class="post-img">
-                <div style="padding: 10px; font-size: 13px;">
-                    Опять выброс переждали в подвале на Кордоне. Сидорович за хабар дал копейки...
+                <img src="https://via.placeholder.com/400x240/112211/00ff66?text=Вылазка+в+Темную+Долину" class="post-img">
+                <div style="padding: 8px; font-size: 12px;">
+                    Переждали выброс на заброшенной ферме. Взяли пару "ночных звезд".
                 </div>
                 <div class="post-actions">
-                    <button class="action-btn" onclick="addKarma(this)">☢️ + в карму (<span class="karma-count">12</span>)</button>
-                    <button class="action-btn" onclick="openComments()">📜 Малява (3)</button>
+                    <button class="action-btn" onclick="toggleKarma(this)">☢️ + в карму (<span class="karma-cnt">15</span>)</button>
+                    <button class="action-btn" onclick="toggleComments('comments-1')">📜 Малява (<span class="comm-cnt">2</span>)</button>
+                </div>
+                
+                <!-- Секция Маляв (Комментариев) -->
+                <div id="comments-1" class="comments-section">
+                    <div id="comm-list-1">
+                        <div class="comment-item"><b>Шустрый:</b> За сколько отдашь артефакт?</div>
+                        <div class="comment-item"><b>Меченый:</b> Сидорович уже забронировал.</div>
+                    </div>
+                    <div style="display: flex; gap: 4px; margin-top: 6px;">
+                        <input type="text" id="input-comm-1" class="pda-input" style="margin:0; padding:4px 8px; font-size:11px;" placeholder="Оставить маляву...">
+                        <button class="btn-pda" style="width:auto; margin:0; padding:4px 8px; font-size:10px;" onclick="addComment(1)">Отправить</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ВКЛАДКА 2: ВОЛНА (Чат / Взаимные подписки) -->
-    <div id="chats-tab" class="tab-content">
-        <div style="text-align: center; padding: 20px; color: var(--pda-text-gray);">
-            <p>📡 <b>ЛИЧНЫЕ ЧАСТОТЫ (ВОЛНА)</b></p>
-            <small>Здесь отображаются сталкеры, с которыми у вас взаимная подписка.</small>
-            <button class="btn-pda-action" style="margin-top: 20px;">🔍 Поймать частоту сталкера</button>
+    <!-- 2. ПОИСК СТАЛКЕРОВ (ПОИСК ЛЮДЕЙ И БОЙЦОВ) -->
+    <div id="search-tab" class="tab-content">
+        <div class="bolted-panel">
+            <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
+            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
+            <span style="font-size: 11px; color: var(--pda-gold);">🔍 ПОИСК СТАЛКЕРОВ В СЕТИ</span>
+            <input type="text" id="search-input" class="pda-input" placeholder="Поиск по позывному..." oninput="filterStalkers()">
+        </div>
+
+        <div id="search-results">
+            <!-- Пример найденного сталкера -->
+            <div class="user-search-item">
+                <div>
+                    <b>Шустрый</b> <br>
+                    <small style="color: var(--pda-text-gray);">Бойцов: <span class="followers-count">42</span></small>
+                </div>
+                <button class="btn-pda" style="width: auto; padding: 4px 10px; font-size: 10px;" onclick="toggleFollow(this)">Вступить в отряд</button>
+            </div>
+            <div class="user-search-item">
+                <div>
+                    <b>Волк</b> <br>
+                    <small style="color: var(--pda-text-gray);">Бойцов: <span class="followers-count">128</span></small>
+                </div>
+                <button class="btn-pda" style="width: auto; padding: 4px 10px; font-size: 10px;" onclick="toggleFollow(this)">Вступить в отряд</button>
+            </div>
         </div>
     </div>
 
-    <!-- ВКЛАДКА 3: ДОСЬЕ (Профиль) -->
+    <!-- 3. ДОСЬЕ (ПРОФИЛЬ) -->
     <div id="dossier-tab" class="tab-content">
-        <div class="dossier-card">
-            <div class="dossier-top">
-                <!-- Клик по аватарке меняет скин -->
-                <div class="avatar-box" id="user-avatar" style="background-image: url('https://via.placeholder.com/90x110/223322/00ff66?text=Новичок');" onclick="changeSkin()"></div>
-                <div class="user-info">
-                    <div class="name" id="user-callsign">Меченый</div>
-                    <div class="info-row">ранг: <span id="user-rank">Новичок</span></div>
-                    <div class="info-row">группа: <span id="user-faction">Одиночка</span></div>
-                    <div class="info-row">репутация: <span id="user-rep">Нейтрал</span></div>
+        
+        <!-- ПАНЕЛЬ ГЛАВНОГО АДМИНА (Отображается только Админу) -->
+        <div id="admin-panel" class="admin-panel" style="display: none;">
+            <b style="color: var(--pda-gold);">👑 ПАНЕЛЬ ГЛАВНОГО АДМИНА</b>
+            <div style="font-size: 10px; color: #aaa; margin-bottom: 6px;">Выдача ресурсов и управление сетью:</div>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                <button class="btn-pda" style="font-size: 9px; padding: 4px;" onclick="adminAddKarma()">+1000 Кармы</button>
+                <button class="btn-pda" style="font-size: 9px; padding: 4px;" onclick="adminAddFollowers()">+500 Бойцов</button>
+                <button class="btn-pda" style="font-size: 9px; padding: 4px;" onclick="adminAddExp()">+500 EXP</button>
+            </div>
+        </div>
+
+        <div class="bolted-panel">
+            <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
+            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
+
+            <div style="display: flex; gap: 12px; border-bottom: 1px dashed var(--pda-border); padding-bottom: 10px; margin-bottom: 10px;">
+                <div style="width: 80px; height: 95px; border: 1px solid var(--pda-green); background: #112211; display:flex; align-items:center; justify-content:center; color:var(--pda-green); font-size:30px;">
+                    👤
+                </div>
+                <div>
+                    <div id="profile-name" style="font-size: 18px; color: #fff; font-weight: bold;">-</div>
+                    <div style="font-size: 11px; color: var(--pda-text-gray);">Ранг: <span style="color:#fff">Новичок</span></div>
+                    <div style="font-size: 11px; color: var(--pda-text-gray);">Группа: <span style="color:#fff">Одиночка</span></div>
+                    <div style="font-size: 11px; color: var(--pda-text-gray);">Бойцов (подписчиков): <b id="profile-followers" style="color:var(--pda-gold);">0</b></div>
                 </div>
             </div>
 
-            <div class="stats-title">Статистика</div>
-            <div class="stat-row"><span>Вылазок в Личном журнале</span> <b id="stat-posts">0</b></div>
-            <div class="stat-row"><span>Получено + в карму</span> <b id="stat-karma">0</b></div>
-            <div class="stat-row"><span>Оставлено маляв</span> <b id="stat-comments">0</b></div>
-            <div class="stat-row"><span>Всего Опыта (EXP)</span> <b id="stat-exp">0 EXP</b></div>
+            <div style="color: var(--pda-gold); font-size: 14px; font-weight: bold; margin-bottom: 6px;">Статистика</div>
+            <div style="font-size: 11px;">
+                <div style="display:flex; justify-content:space-between; padding: 3px 0;"><span>+ в карму:</span> <b id="profile-karma">0</b></div>
+                <div style="display:flex; justify-content:space-between; padding: 3px 0;"><span>Маляв оставлено:</span> <b id="profile-comments">0</b></div>
+                <div style="display:flex; justify-content:space-between; padding: 3px 0;"><span>Опыт (EXP):</span> <b id="profile-exp">0 EXP</b></div>
+            </div>
 
-            <button class="btn-pda-action" onclick="switchTab('journal')">📖 Открыть Личный журнал</button>
+            <button class="btn-pda" onclick="switchTab('settings')">⚙️ НАСТРОЙКИ КПК</button>
         </div>
     </div>
 
-    <!-- ВКЛАДКА 4: ЛИЧНЫЙ ЖУРНАЛ (Посты пользователя) -->
-    <div id="journal-tab" class="tab-content">
-        <div style="border-bottom: 1px dashed var(--pda-green); padding-bottom: 8px; margin-bottom: 12px;">
-            <b>📖 ЛИЧНЫЙ ЖУРНАЛ ВЫЛАЗОК</b>
-        </div>
-        <div id="my-posts-container" style="color: var(--pda-text-gray); font-size: 12px; text-align: center;">
-            Загрузка ваших вылазок...
+    <!-- 4. СОЗДАНИЕ ВЫЛАЗКИ (ОТПРАВКА ПОСТА) -->
+    <div id="create-post-tab" class="tab-content">
+        <div class="bolted-panel">
+            <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
+            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
+            <span style="font-size: 11px; color: var(--pda-gold);">📸 НОВАЯ ВЫЛАЗКА</span>
+            <p style="font-size: 10px; color: var(--pda-text-gray);">Загрузи фото через Telegram-чат для отправки в Общий канал.</p>
+            <textarea id="post-caption" class="pda-input" rows="3" placeholder="Описание вылазки..."></textarea>
+            <button class="btn-pda" onclick="submitPost()">ОТПРАВИТЬ НА МОДЕРАЦИЮ</button>
         </div>
     </div>
 
-    <!-- Нижнее меню КПК -->
-    <div class="pda-nav">
+    <!-- 5. НАСТРОЙКИ КПК -->
+    <div id="settings-tab" class="tab-content">
+        <div class="bolted-panel">
+            <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
+            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
+            <span style="font-size: 11px; color: var(--pda-gold);">⚙️ НАСТРОЙКИ КПК</span>
+            
+            <div style="margin-top: 12px; font-size: 12px;">
+                <label>Язык интерфейса:</label>
+                <select id="lang-select" class="pda-input" onchange="changeLanguage(this.value)">
+                    <option value="ru">Русский</option>
+                    <option value="ua">Українська</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            
+            <button class="btn-pda" style="border-color: #ff4444; color: #ff4444;" onclick="logout()">ВЫЙТИ ИЗ СЕТИ</button>
+        </div>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ КПК (ПРИПОДНЯТО ВВЕРХ) -->
+    <div class="pda-nav" id="main-nav" style="display: none;">
         <button class="nav-btn active" onclick="switchTab('feed')">📡 Общий канал</button>
-        <button class="nav-btn" onclick="switchTab('chats')">📻 Волна</button>
+        <button class="nav-btn" onclick="switchTab('search')">🔍 Поиск</button>
         <button class="nav-btn" onclick="switchTab('dossier')">🪖 Досье</button>
     </div>
 
-    <!-- Аудио-эффект КПК при получении сообщения/малявы -->
     <audio id="pda-sound" src="https://www.soundjay.com/buttons/button-35.mp3" preload="auto"></audio>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Установка позывного из Telegram
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('user-callsign').innerText = tg.initDataUnsafe.user.first_name;
+        // База данных в браузерной памяти КПК
+        let currentUser = localStorage.getItem('stalker_callsign') || null;
+        let isKarmaAdded = false;
+
+        // Список уже занятых позывных
+        const takenCallsigns = ["меченый", "стрелок", "шрам", "волк", "шустрый", "сидорович", "дегтярев"];
+
+        // Инициализация
+        window.onload = function() {
+            if (currentUser) {
+                showApp();
+            }
+        };
+
+        // Регистрация
+        function registerUser() {
+            const input = document.getElementById('callsign-input').value.trim();
+            const errDiv = document.getElementById('auth-error');
+
+            if (!input) {
+                errDiv.innerText = "Введи позывной!";
+                errDiv.style.display = "block";
+                return;
+            }
+
+            if (takenCallsigns.includes(input.toLowerCase())) {
+                errDiv.innerText = "Этот позывной уже занят другим сталкером!";
+                errDiv.style.display = "block";
+                return;
+            }
+
+            currentUser = input;
+            localStorage.setItem('stalker_callsign', currentUser);
+            showApp();
+        }
+
+        function showApp() {
+            document.getElementById('auth-screen').classList.remove('active');
+            document.getElementById('main-nav').style.display = 'flex';
+            document.getElementById('profile-name').innerText = currentUser;
+            
+            // Проверка на Главного Админа
+            if (currentUser.toLowerCase() === "admin" || currentUser.toLowerCase() === "главный" || (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id == 123456789)) {
+                document.getElementById('admin-panel').style.display = 'block';
+            }
+
+            switchTab('feed');
         }
 
         // Переключение вкладок КПК
-        function switchTab(tabName) {
+        function switchTab(tabId) {
             playPdaSound();
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
 
-            if (tabName === 'feed') {
+            if (tabId === 'feed') {
                 document.getElementById('feed-tab').classList.add('active');
-                event.target.classList.add('active');
-            } else if (tabName === 'chats') {
-                document.getElementById('chats-tab').classList.add('active');
-                event.target.classList.add('active');
-            } else if (tabName === 'dossier') {
+                document.querySelectorAll('.nav-btn')[0].classList.add('active');
+            } else if (tabId === 'search') {
+                document.getElementById('search-tab').classList.add('active');
+                document.querySelectorAll('.nav-btn')[1].classList.add('active');
+            } else if (tabId === 'dossier') {
                 document.getElementById('dossier-tab').classList.add('active');
-                event.target.classList.add('active');
-            } else if (tabName === 'journal') {
-                document.getElementById('journal-tab').classList.add('active');
+                document.querySelectorAll('.nav-btn')[2].classList.add('active');
+            } else if (tabId === 'create-post') {
+                document.getElementById('create-post-tab').classList.add('active');
+            } else if (tabId === 'settings') {
+                document.getElementById('settings-tab').classList.add('active');
             }
         }
 
-        // Звук КПК
+        // Лайки (+ в карму)
+        function toggleKarma(btn) {
+            playPdaSound();
+            const cntSpan = btn.querySelector('.karma-cnt');
+            let val = parseInt(cntSpan.innerText);
+            if (btn.classList.contains('active')) {
+                btn.classList.remove('active');
+                cntSpan.innerText = val - 1;
+            } else {
+                btn.classList.add('active');
+                cntSpan.innerText = val + 1;
+            }
+        }
+
+        // Открытие / Скрытие Маляв (Комментариев)
+        function toggleComments(commId) {
+            playPdaSound();
+            const sec = document.getElementById(commId);
+            sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Добавление новой Малявы
+        function addComment(postId) {
+            playPdaSound();
+            const inp = document.getElementById(`input-comm-${postId}`);
+            const text = inp.value.trim();
+            if (!text) return;
+
+            const list = document.getElementById(`comm-list-${postId}`);
+            const item = document.createElement('div');
+            item.className = 'comment-item';
+            item.innerHTML = `<b>${currentUser}:</b> ${text}`;
+            list.appendChild(item);
+            inp.value = '';
+
+            let profComm = document.getElementById('profile-comments');
+            profComm.innerText = parseInt(profComm.innerText) + 1;
+        }
+
+        // Вступить в отряд / Отписаться (Бойцы)
+        function toggleFollow(btn) {
+            playPdaSound();
+            const cnt = btn.parentElement.querySelector('.followers-count');
+            let current = parseInt(cnt.innerText);
+            if (btn.innerText === "Вступить в отряд") {
+                btn.innerText = "В отряде";
+                btn.style.borderColor = "var(--pda-gold)";
+                cnt.innerText = current + 1;
+            } else {
+                btn.innerText = "Вступить в отряд";
+                btn.style.borderColor = "var(--pda-green)";
+                cnt.innerText = current - 1;
+            }
+        }
+
+        // Отправка вылазки
+        function submitPost() {
+            playPdaSound();
+            alert("Вылазка отправлена Главным КПК на модерацию!");
+            document.getElementById('post-caption').value = '';
+            switchTab('feed');
+        }
+
+        // Функции Главного Админа
+        function adminAddKarma() {
+            let el = document.getElementById('profile-karma');
+            el.innerText = parseInt(el.innerText) + 1000;
+            alert("👑 АДМИН: Выдано 1000 Кармы!");
+        }
+        function adminAddFollowers() {
+            let el = document.getElementById('profile-followers');
+            el.innerText = parseInt(el.innerText) + 500;
+            alert("👑 АДМИН: Выдано 500 Бойцов!");
+        }
+        function adminAddExp() {
+            let el = document.getElementById('profile-exp');
+            let current = parseInt(el.innerText);
+            el.innerText = (current + 500) + " EXP";
+            alert("👑 АДМИН: Выдано 500 EXP!");
+        }
+
+        // Языки
+        function changeLanguage(lang) {
+            const badge = document.getElementById('lang-signal');
+            if (lang === 'ua') badge.innerText = "СИГНАЛ Є";
+            else if (lang === 'en') badge.innerText = "SIGNAL ONLINE";
+            else badge.innerText = "СИГНАЛ ЛОВИТ";
+        }
+
+        function logout() {
+            localStorage.removeItem('stalker_callsign');
+            location.reload();
+        }
+
         function playPdaSound() {
             const audio = document.getElementById('pda-sound');
             audio.currentTime = 0;
             audio.play().catch(()=>{});
-        }
-
-        // Лайк (+ в карму)
-        function addKarma(btn) {
-            playPdaSound();
-            const countSpan = btn.querySelector('.karma-count');
-            let current = parseInt(countSpan.innerText);
-            if (btn.classList.contains('active')) {
-                btn.classList.remove('active');
-                countSpan.innerText = current - 1;
-            } else {
-                btn.classList.add('active');
-                countSpan.innerText = current + 1;
-            }
-        }
-
-        function openComments() {
-            playPdaSound();
-            alert("Малявы загружаются...");
-        }
-
-        function changeSkin() {
-            playPdaSound();
-            alert("Смена костюма/аватарки будет доступна при повышении Опыта (EXP)!");
         }
     </script>
 </body>
