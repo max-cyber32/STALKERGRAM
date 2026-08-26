@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STALKER.GRAM PDA v4.0</title>
+    <title>STALKER.GRAM PDA v5.0 Ultimate</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* ==========================================
-           1. СТИЛИ И ПЕРЕМЕННЫЕ КПК (S.T.A.L.K.E.R. UI)
-           ========================================== */
         :root {
             --pda-bg: #050805;
             --pda-card-bg: #091209;
@@ -23,419 +20,164 @@
             --pda-light-gray: #b0c0b0;
         }
 
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            outline: none;
-        }
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; outline: none; }
 
         body {
             background-color: var(--pda-bg);
             color: var(--pda-light-gray);
             font-family: 'Courier New', Courier, monospace;
-            margin: 0;
-            padding: 0;
-            padding-bottom: 90px;
+            margin: 0; padding: 0; padding-bottom: 90px;
             overflow-x: hidden;
         }
 
-        /* Элементы крепежных болтов */
         .screw {
-            width: 8px;
-            height: 8px;
-            background: #223322;
-            border-radius: 50%;
-            display: inline-block;
-            position: absolute;
-            box-shadow: inset 1px 1px 1px #000, 0 0 2px #000;
-            z-index: 5;
+            width: 8px; height: 8px; background: #223322; border-radius: 50%;
+            position: absolute; box-shadow: inset 1px 1px 1px #000, 0 0 2px #000; z-index: 5;
         }
-        .screw::before {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 1px;
-            width: 6px;
-            height: 2px;
-            background: #050d05;
-        }
-        .screw-tl { top: 5px; left: 5px; }
-        .screw-tr { top: 5px; right: 5px; }
-        .screw-bl { bottom: 5px; left: 5px; }
-        .screw-br { bottom: 5px; right: 5px; }
+        .screw::before { content: ''; position: absolute; top: 3px; left: 1px; width: 6px; height: 2px; background: #050d05; }
+        .screw-tl { top: 5px; left: 5px; } .screw-tr { top: 5px; right: 5px; }
+        .screw-bl { bottom: 5px; left: 5px; } .screw-br { bottom: 5px; right: 5px; }
 
-        /* Панели и контейнеры */
         .bolted-panel {
-            background: var(--pda-card-bg);
-            border: 2px solid var(--pda-border);
-            border-radius: 6px;
-            padding: 14px;
-            position: relative;
-            margin-bottom: 12px;
+            background: var(--pda-card-bg); border: 2px solid var(--pda-border);
+            border-radius: 6px; padding: 14px; position: relative; margin-bottom: 12px;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
         }
 
         .panel-header {
-            color: var(--pda-gold);
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            border-bottom: 1px dashed var(--pda-border);
-            padding-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            color: var(--pda-gold); font-size: 13px; font-weight: bold; margin-bottom: 10px;
+            border-bottom: 1px dashed var(--pda-border); padding-bottom: 5px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* Верхняя Шапка */
         .pda-header {
-            background: var(--pda-header-bg);
-            border-bottom: 2px solid var(--pda-border);
-            padding: 10px 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 999;
+            background: var(--pda-header-bg); border-bottom: 2px solid var(--pda-border);
+            padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 999;
         }
 
-        .header-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            color: #fff;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-
-        .rad-symbol {
-            background: var(--pda-gold);
-            color: #000;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 0 8px var(--pda-gold);
-        }
-
-        .pda-status-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 11px;
-        }
-
-        .notif-badge-btn {
-            position: relative;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .badge-count {
-            position: absolute;
-            top: -4px;
-            right: -6px;
-            background: var(--pda-red);
-            color: #fff;
-            font-size: 9px;
-            border-radius: 50%;
-            padding: 2px 5px;
-            font-weight: bold;
-        }
-
-        /* Поля ввода и кнопки */
         .pda-input, .pda-select, .pda-textarea {
-            width: 100%;
-            background: #020502;
-            border: 1px solid var(--pda-border);
-            color: var(--pda-green);
-            padding: 10px;
-            font-family: inherit;
-            margin: 6px 0 12px 0;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 12px;
-        }
-        .pda-input:focus, .pda-select:focus, .pda-textarea:focus {
-            border-color: var(--pda-green);
-            box-shadow: 0 0 5px rgba(0,255,102,0.3);
+            width: 100%; background: #020502; border: 1px solid var(--pda-border);
+            color: var(--pda-green); padding: 10px; font-family: inherit; margin: 6px 0 12px 0;
+            border-radius: 4px; box-sizing: border-box; font-size: 12px;
         }
 
         .btn-pda {
-            background: var(--pda-dark-green);
-            border: 1px solid var(--pda-green);
-            color: var(--pda-green);
-            padding: 10px 14px;
-            width: 100%;
-            font-family: inherit;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
+            background: var(--pda-dark-green); border: 1px solid var(--pda-green);
+            color: var(--pda-green); padding: 10px 14px; width: 100%; font-family: inherit;
+            font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 12px;
+            text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s ease;
         }
-        .btn-pda:active {
-            background: var(--pda-green);
-            color: #000;
-        }
-        .btn-pda-red {
-            background: #2a0a0a;
-            border-color: var(--pda-red);
-            color: var(--pda-red);
-        }
-        .btn-pda-red:active {
-            background: var(--pda-red);
-            color: #fff;
-        }
+        .btn-pda:active { background: var(--pda-green); color: #000; }
+        .btn-pda-red { background: #2a0a0a; border-color: var(--pda-red); color: var(--pda-red); }
 
-        /* Навигация (Нижнее меню) */
         .pda-nav {
-            position: fixed;
-            bottom: 10px;
-            left: 8px;
-            right: 8px;
-            height: 60px;
-            background: #040804;
-            border: 2px solid var(--pda-border);
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 0 15px rgba(0,0,0,0.9);
+            position: fixed; bottom: 10px; left: 8px; right: 8px; height: 60px;
+            background: #040804; border: 2px solid var(--pda-border); border-radius: 8px;
+            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
         }
 
         .nav-item {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--pda-gray);
-            font-size: 10px;
-            padding: 6px 4px;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            flex: 1;
-            font-family: inherit;
-            font-weight: bold;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
+            background: transparent; border: 1px solid transparent; color: var(--pda-gray);
+            font-size: 10px; padding: 6px 4px; border-radius: 5px; cursor: pointer;
+            text-align: center; flex: 1; font-family: inherit; font-weight: bold;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
         }
-        .nav-item.active {
-            color: var(--pda-green);
-            border-color: var(--pda-green);
-            background: var(--pda-dark-green);
-            box-shadow: inset 0 0 6px rgba(0,255,102,0.3);
+        .nav-item.active { color: var(--pda-green); border-color: var(--pda-green); background: var(--pda-dark-green); }
+
+        .tab-content { display: none; padding: 12px; }
+        .tab-content.active { display: block; }
+
+        /* АНИМАЦИЯ ОШИБКИ И ДОСТУПА */
+        @keyframes shakeError {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-10px, 0); }
+            40% { transform: translate(10px, 0); }
+            60% { transform: translate(-10px, 0); }
+            80% { transform: translate(10px, 0); }
+            100% { transform: translate(0, 0); }
         }
 
-        /* Вкладки */
-        .tab-content {
-            display: none;
-            padding: 12px;
+        .error-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(20, 0, 0, 0.92); z-index: 9999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            border: 4px solid var(--pda-red); animation: shakeError 0.4s ease-in-out;
         }
-        .tab-content.active {
-            display: block;
+        .error-cross { font-size: 80px; color: var(--pda-red); text-shadow: 0 0 20px var(--pda-red); }
+        .error-text { color: var(--pda-red); font-size: 18px; font-weight: bold; margin-top: 10px; text-transform: uppercase; }
+
+        /* Посты */
+        .post-card { background: var(--pda-card-bg); border: 1px solid var(--pda-border); border-radius: 6px; margin-bottom: 14px; overflow: hidden; }
+        .post-header { padding: 10px; background: #040804; display: flex; justify-content: space-between; align-items: center; font-size: 12px; border-bottom: 1px solid var(--pda-border); }
+        .post-img { width: 100%; max-height: 280px; object-fit: cover; display: block; border-bottom: 1px solid var(--pda-border); }
+        .post-body { padding: 10px; font-size: 12px; line-height: 1.4; color: #d0ded0; }
+        .post-actions { padding: 8px 10px; display: flex; gap: 15px; background: #040804; border-top: 1px solid var(--pda-border); }
+        
+        .avatar-box { width: 45px; height: 45px; border-radius: 4px; border: 1px solid var(--pda-green); overflow: hidden; background: #000; }
+        .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Выброс */
+        @keyframes emissionFlash {
+            0% { opacity: 0; }
+            50% { opacity: 0.85; background: #ffaa00; }
+            100% { opacity: 0; }
+        }
+        .emission-screen-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none; z-index: 8888; display: none;
         }
 
-        /* Посты (Лента) */
-        .post-card {
-            background: var(--pda-card-bg);
-            border: 1px solid var(--pda-border);
-            border-radius: 6px;
-            margin-bottom: 14px;
-            overflow: hidden;
-        }
-        .post-header {
-            padding: 10px;
-            background: #040804;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            border-bottom: 1px solid var(--pda-border);
-        }
-        .post-author {
-            font-weight: bold;
-            color: #fff;
-        }
-        .post-faction {
-            color: var(--pda-gold);
-            font-size: 10px;
-        }
-        .post-img {
-            width: 100%;
-            max-height: 280px;
-            object-fit: cover;
-            display: block;
-            border-bottom: 1px solid var(--pda-border);
-        }
-        .post-body {
-            padding: 10px;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #d0ded0;
-        }
-        .post-actions {
-            padding: 8px 10px;
-            display: flex;
-            gap: 15px;
-            background: #040804;
-            border-top: 1px solid var(--pda-border);
-        }
-        .action-btn {
-            background: transparent;
-            border: none;
-            color: var(--pda-gray);
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .action-btn.active {
-            color: var(--pda-gold);
-        }
-
-        .comments-block {
-            background: #030603;
-            border-top: 1px dashed var(--pda-border);
-            padding: 10px;
-            display: none;
-        }
-        .comment-item {
-            font-size: 11px;
-            padding: 4px 0;
-            border-bottom: 1px dotted #112211;
-        }
-
-        /* Список игроков / Кланы */
-        .user-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border: 1px solid var(--pda-border);
-            background: #060c06;
-            margin-bottom: 8px;
-            border-radius: 4px;
-        }
-        .user-info-title {
-            font-weight: bold;
-            color: #fff;
-            font-size: 13px;
-        }
-        .user-info-sub {
-            font-size: 10px;
-            color: var(--pda-gray);
-            margin-top: 2px;
-        }
-
-        /* Админка */
-        .admin-box {
-            border: 2px solid var(--pda-gold);
-            background: #141000;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 14px;
-        }
-
-        /* Магазин и Инвентарь */
-        .shop-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .shop-item {
-            background: #040804;
-            border: 1px solid var(--pda-border);
-            padding: 8px;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .shop-item-title {
-            font-size: 11px;
-            font-weight: bold;
-            color: #fff;
-        }
-        .shop-item-price {
-            font-size: 10px;
-            color: var(--pda-gold);
-            margin: 4px 0;
-        }
-
-        /* Переключатель Вход/Регистрация */
-        .auth-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .auth-tab-btn {
-            flex: 1;
-            padding: 8px;
-            background: #020502;
-            border: 1px solid var(--pda-border);
-            color: var(--pda-gray);
-            font-family: inherit;
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        .auth-tab-btn.active {
-            background: var(--pda-dark-green);
-            color: var(--pda-green);
-            border-color: var(--pda-green);
-        }
+        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .shop-item { background: #040804; border: 1px solid var(--pda-border); padding: 8px; border-radius: 4px; text-align: center; }
     </style>
 </head>
 <body>
 
-    <!-- ==========================================
-       2. ВЕРХНЯЯ СИСТЕМНАЯ ШАПКА
-       ========================================== -->
+    <!-- ВСПЫШКА ВЫБРОСА -->
+    <div id="emission-overlay" class="emission-screen-overlay"></div>
+
+    <!-- ОКНО ОШИБКИ ВХОДА -->
+    <div id="error-screen" class="error-overlay">
+        <div class="error-cross">❌</div>
+        <div class="error-text">СИСТЕМА НЕ ПУСКАЕТ</div>
+        <small style="color: #aaa; margin-top: 10px;">Неверный позывной или пароль КПК</small>
+        <button class="btn-pda btn-pda-red" style="width: auto; margin-top: 20px; padding: 8px 20px;" onclick="closeError()">ПОПРОБОВАТЬ СНОВА</button>
+    </div>
+
+    <!-- ВЕРХНЯЯ ШАПКА -->
     <div class="pda-header">
-        <div class="header-brand">
-            <div class="rad-symbol">☢</div>
+        <div style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: #fff;">
+            <span style="background: var(--pda-gold); color: #000; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;">☢</span>
             <span>КПК "СВЯЗЬ ЧЗО"</span>
         </div>
-        <div class="pda-status-bar">
-            <span id="emission-timer" style="color: var(--pda-orange);">ДО ВЫБРОСА: 02:45</span>
-            <div class="notif-badge-btn" onclick="switchTab('notifications')">
-                🔔 <span class="badge-count" id="notif-count">1</span>
+        <div style="display: flex; align-items: center; gap: 12px; font-size: 11px;">
+            <span id="emission-timer" style="color: var(--pda-orange);">ВЫБРОС: 03:00:00</span>
+            <div style="cursor: pointer; position: relative;" onclick="switchTab('notifications')">
+                🔔 <span id="notif-count" style="position: absolute; top:-4px; right:-6px; background: var(--pda-red); color:#fff; font-size:9px; border-radius:50%; padding:2px 4px;">1</span>
             </div>
         </div>
     </div>
 
-    <!-- ==========================================
-       3. ЭКРАН АВТОРИЗАЦИИ / РЕГИСТРАЦИИ
-       ========================================== -->
+    <!-- ЭКРАН АВТОРИЗАЦИИ / РЕГИСТРАЦИИ -->
     <div id="auth-screen" class="tab-content active">
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
             <div class="screw screw-bl"></div><div class="screw screw-br"></div>
 
-            <div class="auth-tabs">
-                <button class="auth-tab-btn active" id="btn-tab-login" onclick="toggleAuthMode('login')">ВХОД В СЕТЬ</button>
-                <button class="auth-tab-btn" id="btn-tab-register" onclick="toggleAuthMode('register')">СОЗДАТЬ АККАУНТ</button>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button class="btn-pda" id="btn-tab-login" onclick="toggleAuthMode('login')">ВХОД В СЕТЬ</button>
+                <button class="btn-pda" id="btn-tab-register" style="background:#020502; color:var(--pda-gray);" onclick="toggleAuthMode('register')">СОЗДАТЬ АККАУНТ</button>
             </div>
 
             <!-- Форма Входа -->
             <div id="form-login">
                 <div class="panel-header">🔑 АВТОРИЗАЦИЯ В КПК</div>
-                <label style="font-size: 11px;">Позывной сталкера:</label>
-                <input type="text" id="login-callsign" class="pda-input" placeholder="Введите позывной..." value="ovchinnikov">
+                <label style="font-size: 10px;">Позывной сталкера:</label>
+                <input type="text" id="login-callsign" class="pda-input" placeholder="Позывной..." value="Стрелок">
 
-                <label style="font-size: 11px;">Пароль доступа:</label>
-                <input type="password" id="login-password" class="pda-input" placeholder="Введите пароль..." value="123456">
+                <label style="font-size: 10px;">Пароль КПК:</label>
+                <input type="password" id="login-password" class="pda-input" placeholder="Пароль..." value="121512">
 
                 <button class="btn-pda" onclick="handleLogin()">ПОДКЛЮЧИТЬСЯ К СЕТИ</button>
             </div>
@@ -444,220 +186,151 @@
             <div id="form-register" style="display: none;">
                 <div class="panel-header">📝 РЕГИСТРАЦИЯ НОВОГО СТАЛКЕРА</div>
                 
-                <label style="font-size: 10px;">Ваш Позывной:</label>
-                <input type="text" id="reg-callsign" class="pda-input" placeholder="Например: Меченый">
+                <label style="font-size: 10px;">Позывной:</label>
+                <input type="text" id="reg-callsign" class="pda-input" placeholder="Введите позывной...">
 
-                <label style="font-size: 10px;">Пароль КПК:</label>
+                <label style="font-size: 10px;">Пароль:</label>
                 <input type="password" id="reg-password" class="pda-input" placeholder="Пароль...">
 
-                <label style="font-size: 10px;">Группировка ЧЗО:</label>
+                <label style="font-size: 10px;">Группировка:</label>
                 <select id="reg-faction" class="pda-select">
-                    <option value="Одиночки">Одиночки (Вольные сталкеры)</option>
-                    <option value="Долг">Группировка "Долг"</option>
-                    <option value="Свобода">Группировка "Свобода"</option>
-                    <option value="Монолит">Группировка "Монолит"</option>
-                    <option value="Учёные">Экологи / Учёные</option>
+                    <option value="Одиночки">Одиночки</option>
+                    <option value="Свобода">Свобода</option>
+                    <option value="Монолит">Монолит</option>
+                    <option value="Учёные">Учёные</option>
                     <option value="Бандиты">Бандиты</option>
-                    <option value="Наёмники">Спецгруппа Наёмников</option>
                 </select>
 
                 <label style="font-size: 10px;">Любимое оружие:</label>
                 <select id="reg-weapon" class="pda-select">
                     <option value="АК-74М">АК-74М</option>
                     <option value="ВСС Винторез">ВСС Винторез</option>
-                    <option value="Дробовик Чейзер-13">Дробовик Чейзер-13</option>
-                    <option value="Гаусс-пушка">Гаусс-пушка</option>
-                    <option value="ПМ (Пистолет Макарова)">ПМ (Пистолет Макарова)</option>
-                    <option value="СВД">СВД (Снайперская винтовка Драгунова)</option>
-                    <option value="ТРс-301">ТРс-301</option>
+                    <option value="Дробовик Чейзер-13">Чейзер-13</option>
+                    <option value="ПМ">ПМ</option>
                 </select>
 
-                <label style="font-size: 10px;">Краткая биография:</label>
-                <textarea id="reg-bio" class="pda-textarea" rows="2" placeholder="Откуда пришли в Зону, цели..."></textarea>
-
-                <button class="btn-pda" onclick="handleRegister()">ЗАРЕГИСТРИРОВАТЬ АККАУНТ</button>
+                <button class="btn-pda" onclick="handleRegister()">СОЗДАТЬ АККАУНТ</button>
             </div>
         </div>
     </div>
 
-    <!-- ==========================================
-       4. ОСНОВНЫЕ ВКЛАДКИ КПК
-       ========================================== -->
-
-    <!-- TAB 1: ОБЩИЙ КАНАЛ / ЛЕНТА ВЫЛАЗОК -->
+    <!-- Вкладка 1: ЛЕНТА (ОБЩИЙ ЭФИР) -->
     <div id="feed-tab" class="tab-content">
         <div class="bolted-panel" style="padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
             <span style="font-size: 11px; color: var(--pda-gold);">📡 ОБЩИЙ ЭФИР ЧЗО</span>
-            <button class="btn-pda" style="width: auto; padding: 5px 10px; font-size: 10px;" onclick="switchTab('create-post')">📸 НОВАЯ ВЫЛАЗКА</button>
+            <button class="btn-pda" style="width: auto; padding: 4px 8px; font-size: 10px;" onclick="switchTab('create-post')">📸 НОВАЯ ВЫЛАЗКА</button>
         </div>
 
-        <div id="posts-container">
-            <!-- Посты генерируются динамически через JS -->
-        </div>
+        <div id="posts-container"></div>
     </div>
 
-    <!-- TAB 2: ПОИСК СТАЛКЕРОВ И БОЙЦОВ -->
+    <!-- Вкладка 2: ПОИСК СТАЛКЕРОВ -->
     <div id="search-tab" class="tab-content">
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
-            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
-            <div class="panel-header">🔍 ПОИСК СТАЛКЕРОВ В СЕТИ КПК</div>
-            <input type="text" id="search-input" class="pda-input" placeholder="Введите позывной..." onkeyup="renderStalkersList()">
+            <div class="panel-header">🔍 ПОИСК СТАЛКЕРОВ</div>
+            <input type="text" id="search-input" class="pda-input" placeholder="Поиск по позывному..." onkeyup="renderStalkersList()">
         </div>
-
-        <div id="stalkers-list-container">
-            <!-- Список сталкеров через JS -->
-        </div>
+        <div id="stalkers-list-container"></div>
     </div>
 
-    <!-- TAB 3: ГРУППИРОВКИ И КЛАНЫ -->
+    <!-- Вкладка 3: ГРУППИРОВКИ -->
     <div id="clans-tab" class="tab-content">
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
-            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
-            <div class="panel-header">🛡️ ГРУППИРОВКИ И КЛАНЫ ЧЗО</div>
-            <p style="font-size: 11px; color: var(--pda-gray);">Вы можете подать заявку на вступление в другую группировку.</p>
-
-            <div id="clans-list">
-                <!-- Группировки JS -->
-            </div>
+            <div class="panel-header">🛡️ ГРУППИРОВКИ ЧЗО</div>
+            <div style="font-size: 10px; color: #aaa; margin-bottom: 10px;">Для вступления требуется от 10 одобренных постов и подтверждение Лидера!</div>
+            <div id="clans-list"></div>
         </div>
     </div>
 
-    <!-- TAB 4: КАРТА И АНОМАЛИИ -->
+    <!-- Вкладка 4: КАРТА ЗОНЫ -->
     <div id="map-tab" class="tab-content">
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
-            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
-            <div class="panel-header">🗺️ ИНТЕРАКТИВНАЯ КАРТА ЧЗО</div>
-            
-            <div style="width: 100%; height: 220px; background: #020902; border: 1px solid var(--pda-green); position: relative; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                <div style="position: absolute; color: rgba(0,255,102,0.15); font-size: 70px; font-weight: bold;">ЧЗО МЕП</div>
-                <div style="position: absolute; top: 20px; left: 30px; color: var(--pda-red); font-size: 11px;">⚠️ Радиационное поле (Кордон)</div>
-                <div style="position: absolute; top: 80px; right: 40px; color: var(--pda-gold); font-size: 11px;">⚡ Аномалия "Электра" (Затон)</div>
-                <div style="position: absolute; bottom: 30px; left: 90px; color: var(--pda-green); font-size: 11px;">📍 Вы у базы "100 Рентген"</div>
+            <div class="panel-header">🗺️ СМОТРОВАЯ КАРТА ЧЗО</div>
+            <div style="position: relative; border: 1px solid var(--pda-green); overflow: hidden; border-radius: 4px;">
+                <img id="zone-map-img" src="" style="width: 100%; display: block;">
             </div>
-
-            <button class="btn-pda" style="margin-top: 10px;" onclick="scanAnomaly()">🔍 СКАНИРОВАТЬ МЕСТНОСТЬ ДЕТЕКТОРОМ</button>
-            <div id="scan-result" style="font-size: 11px; color: var(--pda-gold); margin-top: 8px; text-align: center;"></div>
         </div>
     </div>
 
-    <!-- TAB 5: МАГАЗИН И ТОРГОВЛЯ -->
+    <!-- Вкладка 5: РЫНОК ОРУЖИЯ -->
     <div id="shop-tab" class="tab-content">
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
-            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
-            <div class="panel-header">🛒 ТОРГОВАЯ СЕТЬ БАРМЕНА</div>
+            <div class="panel-header">🛒 РЫНОК ОРУЖИЯ И СНАРЯЖЕНИЯ</div>
             <p style="font-size: 11px;">Баланс: <b id="shop-balance" style="color: var(--pda-gold);">0 руб.</b></p>
-
-            <div class="shop-grid">
-                <div class="shop-item">
-                    <div class="shop-item-title">💊 Аптечка (Научная)</div>
-                    <div class="shop-item-price">1 500 руб.</div>
-                    <button class="btn-pda" style="padding: 4px; font-size: 10px;" onclick="buyItem('Аптечка', 1500)">Купить</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-title">🍗 Консервы "Tushonka"</div>
-                    <div class="shop-item-price">300 руб.</div>
-                    <button class="btn-pda" style="padding: 4px; font-size: 10px;" onclick="buyItem('Консервы', 300)">Купить</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-title">📟 Детектор "Сварог"</div>
-                    <div class="shop-item-price">12 000 руб.</div>
-                    <button class="btn-pda" style="padding: 4px; font-size: 10px;" onclick="buyItem('Детектор Сварог', 12000)">Купить</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-title">🔋 Артефакт "Вспышка"</div>
-                    <div class="shop-item-price">8 500 руб.</div>
-                    <button class="btn-pda" style="padding: 4px; font-size: 10px;" onclick="buyItem('Артефакт Вспышка', 8500)">Купить</button>
-                </div>
-            </div>
+            <div class="shop-grid" id="shop-grid-items"></div>
         </div>
     </div>
 
-    <!-- TAB 6: ДОСЬЕ И ПРОФИЛЬ -->
+    <!-- Вкладка 6: ДОСЬЕ И МОДЕРАЦИЯ -->
     <div id="dossier-tab" class="tab-content">
-        <!-- АДМИН-ПАНЕЛЬ (Видима только администратору) -->
-        <div id="admin-panel" class="admin-box" style="display: none;">
-            <div style="color: var(--pda-gold); font-weight: bold; font-size: 13px;">👑 ПАНЕЛЬ ГЛАВНОГО АДМИНА (@ovchinnikov)</div>
-            <div style="font-size: 10px; color: #bbb; margin: 4px 0 10px 0;">Управление сетью КПК и пользователями:</div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                <button class="btn-pda" style="font-size: 9px; padding: 6px;" onclick="adminAddMoney()">+50 000 руб.</button>
-                <button class="btn-pda" style="font-size: 9px; padding: 6px;" onclick="adminAddKarma()">+1000 Кармы</button>
-                <button class="btn-pda" style="font-size: 9px; padding: 6px;" onclick="adminAddFollowers()">+500 Бойцов</button>
-                <button class="btn-pda btn-pda-red" style="font-size: 9px; padding: 6px;" onclick="adminBanUser()">Забанить сталкера</button>
-            </div>
-            <button class="btn-pda" style="font-size: 10px; margin-top: 6px; background: #332200;" onclick="adminBroadcast()">📢 ЭКСТРЕННАЯ РАССЫЛКА</button>
+        <!-- Панель Модерации Постов (Только для Админа/Стрелка) -->
+        <div id="admin-mod-panel" class="bolted-panel" style="border-color: var(--pda-gold); display: none;">
+            <div class="panel-header">🛡️ ПРЕПРЕДЛОЖКА / МОДЕРАЦИЯ ПОСТОВ</div>
+            <div id="moderation-posts-list"></div>
         </div>
 
-        <!-- ПРОФИЛЬ И СТАТИСТИКА -->
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
-            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
-
-            <div style="display: flex; gap: 14px; border-bottom: 1px dashed var(--pda-border); padding-bottom: 12px; margin-bottom: 12px;">
-                <div style="width: 70px; height: 85px; border: 1px solid var(--pda-green); background: #0c1a0c; display:flex; align-items:center; justify-content:center; color:var(--pda-green); font-size:32px;">👤</div>
+            
+            <div style="display: flex; gap: 12px; align-items: center; border-bottom: 1px dashed var(--pda-border); padding-bottom: 10px; margin-bottom: 10px;">
+                <div class="avatar-box" style="width: 60px; height: 60px;">
+                    <img id="prof-avatar-img" src="">
+                </div>
                 <div>
-                    <div id="prof-callsign" style="font-size: 17px; color: #fff; font-weight: bold;">-</div>
-                    <div style="font-size: 11px; color: var(--pda-gray); margin-top: 2px;">Группировка: <b id="prof-faction" style="color:var(--pda-gold);">-</b></div>
-                    <div style="font-size: 11px; color: var(--pda-gray);">Любимое оружие: <b id="prof-weapon" style="color:#fff;">-</b></div>
-                    <div style="font-size: 11px; color: var(--pda-gray);">Бойцов в отряде: <b id="prof-followers" style="color:var(--pda-green);">0</b></div>
+                    <div id="prof-callsign" style="font-size: 16px; color: #fff; font-weight: bold;">-</div>
+                    <div style="font-size: 11px;">Группировка: <b id="prof-faction" style="color:var(--pda-gold);">-</b></div>
+                    <button class="btn-pda" style="padding: 2px 6px; font-size: 9px; margin-top: 4px;" onclick="changeAvatarPrompt()">Сменить аватар</button>
                 </div>
             </div>
 
-            <div class="panel-header">📊 ЛИЧНАЯ СТАТИСТИКА</div>
-            <div style="font-size: 11px; line-height: 1.8;">
-                <div style="display:flex; justify-content:space-between;"><span>Баланс КПК:</span> <b id="prof-money" style="color:var(--pda-gold);">0 руб.</b></div>
-                <div style="display:flex; justify-content:space-between;"><span>Репутация (Карма):</span> <b id="prof-karma" style="color:var(--pda-green);">0</b></div>
-                <div style="display:flex; justify-content:space-between;"><span>Отправлено маляв:</span> <b id="prof-comments">0</b></div>
+            <div class="panel-header">📊 СТАТИСТИКА И ИНВЕНТАРЬ</div>
+            <div style="font-size: 11px; line-height: 1.6;">
+                <div>Баланс: <b id="prof-money" style="color:var(--pda-gold);">0 руб.</b></div>
+                <div>Одобренных постов: <b id="prof-posts-cnt" style="color:var(--pda-green);">0</b></div>
             </div>
 
-            <div class="panel-header" style="margin-top: 10px;">📜 БИОГРАФИЯ СТАЛКЕРА</div>
-            <div id="prof-bio" style="font-size: 11px; color: var(--pda-gray); font-style: italic;">Описание отсутствует...</div>
-
             <div class="panel-header" style="margin-top: 10px;">🎒 ИНВЕНТАРЬ</div>
-            <div id="prof-inventory" style="font-size: 11px; color: var(--pda-light-gray);">Рюкзак пуст</div>
+            <div id="prof-inventory" style="font-size: 11px; color: #aaa;">Пусто</div>
 
-            <button class="btn-pda btn-pda-red" style="margin-top: 15px;" onclick="handleLogout()">ВЫЙТИ ИЗ АККАУНТА КПК</button>
+            <div class="panel-header" style="margin-top: 10px;">📑 МОИ ВЫЛАЗКИ</div>
+            <div id="my-posts-list"></div>
+
+            <button class="btn-pda btn-pda-red" style="margin-top: 15px;" onclick="handleLogout()">ВЫЙТИ ИЗ АККАУНТА</button>
         </div>
     </div>
 
-    <!-- TAB 7: СОЗДАНИЕ НОВОГО ПОСТА -->
+    <!-- Вкладка 7: СОЗДАНИЕ ПОСТА -->
     <div id="create-post-tab" class="tab-content">
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
-            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
-            <div class="panel-header">📸 НОВАЯ ВЫЛАЗКА ИЛИ ОТЧЕТ</div>
+            <div class="panel-header">📸 ПУБЛИКАЦИЯ ВЫЛАЗКИ</div>
+            <p style="font-size: 10px; color: var(--pda-gold);">* Все посты проходят обязательную модерацию администратором!</p>
             
-            <label style="font-size: 10px;">Ссылка на фотографию / скриншот:</label>
-            <input type="text" id="post-img-input" class="pda-input" placeholder="https://picsum.photos/500/260">
+            <label style="font-size: 10px;">Ссылка на фото:</label>
+            <input type="text" id="post-img-input" class="pda-input" placeholder="https://...">
 
-            <label style="font-size: 10px;">Текст отчета / сообщения в эфир:</label>
-            <textarea id="post-text-input" class="pda-textarea" rows="4" placeholder="Расскажите о вашей вылазке..."></textarea>
+            <label style="font-size: 10px;">Текст вылазки:</label>
+            <textarea id="post-text-input" class="pda-textarea" rows="3" placeholder="Описание..."></textarea>
 
-            <button class="btn-pda" onclick="submitNewPost()">ОПУБЛИКОВАТЬ В ОБЩИЙ ЭФИР</button>
+            <button class="btn-pda" onclick="submitNewPost()">ОТПРАВИТЬ НА МОДЕРАЦИЮ</button>
         </div>
     </div>
 
-    <!-- TAB 8: УВЕДОМЛЕНИЯ -->
+    <!-- Вкладка 8: УВЕДОМЛЕНИЯ -->
     <div id="notifications-tab" class="tab-content">
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
-            <div class="screw screw-bl"></div><div class="screw screw-br"></div>
-            <div class="panel-header">🔔 СИСТЕМНЫЕ УВЕДОМЛЕНИЯ КПК</div>
-            
-            <div id="notif-list" style="font-size: 11px;">
-                <!-- Уведомления JS -->
-            </div>
+            <div class="panel-header">🔔 СИСТЕМНЫЕ УВЕДОМЛЕНИЯ</div>
+            <div id="notif-list" style="font-size: 11px;"></div>
         </div>
     </div>
 
-    <!-- ==========================================
-       5. НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ КПК
-       ========================================== -->
+    <!-- НИЖНЕЕ МЕНЮ -->
     <div class="pda-nav" id="main-nav" style="display: none;">
         <button class="nav-item active" onclick="switchTab('feed')">📡<span>Эфир</span></button>
         <button class="nav-item" onclick="switchTab('search')">🔍<span>Поиск</span></button>
@@ -667,544 +340,375 @@
         <button class="nav-item" onclick="switchTab('dossier')">👤<span>Досье</span></button>
     </div>
 
-    <!-- ==========================================
-       6. ЛОГИКА И СУПЕР-СКРИПТ (JAVASCRIPT)
-       ========================================== -->
     <script>
-        /* Telegram WebApp инициализация */
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) {
-            tg.expand();
-        }
+        // Пресеты Аватарок Stalker
+        const defaultAvatars = [
+            "https://picsum.photos/id/1005/100/100",
+            "https://picsum.photos/id/1025/100/100",
+            "https://picsum.photos/id/1062/100/100"
+        ];
 
-        /* ------------------------------------------
-           БАЗА ДАННЫХ И СОСТОЯНИЕ ПРИЛОЖЕНИЯ
-           ------------------------------------------ */
-        let usersDb = JSON.parse(localStorage.getItem('stalker_users_db')) || {
-            "ovchinnikov": {
-                callsign: "ovchinnikov",
-                password: "123",
-                faction: "Одиночки",
-                weapon: "АК-74М",
-                bio: "Главный Администратор сети КПК ЧЗО.",
-                money: 100000,
-                karma: 500,
-                followers: 1250,
-                commentsCount: 12,
-                inventory: ["Аптечка (2)", "Детектор Сварог"]
-            },
-            "Меченый": {
-                callsign: "Меченый",
-                password: "123",
-                faction: "Одиночки",
+        let usersDb = JSON.parse(localStorage.getItem('stalker_v5_users')) || {
+            "Стрелок": {
+                callsign: "Стрелок",
+                password: "121512",
+                faction: "Долг",
+                isLeader: true,
                 weapon: "ВСС Винторез",
-                bio: "Ищет Стрелка.",
-                money: 15000,
-                karma: 340,
-                followers: 890,
-                commentsCount: 45,
-                inventory: ["Аптечка"]
-            },
-            "Шустрый": {
-                callsign: "Шустрый",
-                password: "123",
-                faction: "Торговцы",
-                weapon: "ПМ (Пистолет Макарова)",
-                bio: "Достану любое редкое снаряжение под заказ.",
-                money: 50000,
-                karma: 120,
-                followers: 430,
-                commentsCount: 8,
-                inventory: []
+                money: 150000,
+                approvedPosts: 15,
+                avatar: defaultAvatars[0],
+                inventory: ["ВСС Винторез", "Аптечка"]
             }
         };
 
-        let postsDb = JSON.parse(localStorage.getItem('stalker_posts_db')) || [
-            {
-                id: 1,
-                author: "Меченый",
-                faction: "Одиночки",
-                time: "14:20",
-                img: "https://picsum.photos/id/1018/500/260",
-                text: "Закончили вылазку на Затон. Выброс переждали возле Янова, весь хабар сберегли!",
-                karma: 42,
-                comments: [
-                    { author: "Шустрый", text: "Заноси артефакты на Свалку, проверим износ!" }
-                ]
-            },
-            {
-                id: 2,
-                author: "Шустрый",
-                faction: "Торговцы",
-                time: "11:05",
-                img: "https://picsum.photos/id/1015/500/260",
-                text: "Внимание! Есть в наличии свежие детекторы 'Сварог'. Заказы принимаю в личном КПК.",
-                karma: 88,
-                comments: []
-            }
-        ];
+        let postsDb = JSON.parse(localStorage.getItem('stalker_v5_posts')) || [];
+        let modQueue = JSON.parse(localStorage.getItem('stalker_v5_modQueue')) || [];
+        let clanRequests = JSON.parse(localStorage.getItem('stalker_v5_clanRequests')) || [];
+        let notifsDb = JSON.parse(localStorage.getItem('stalker_v5_notifs')) || ["📟 Сеть КПК подключена."];
 
-        let notificationsDb = JSON.parse(localStorage.getItem('stalker_notifs_db')) || [
-            "📟 Соединение с сервером КПК ЧЗО установлено.",
-            "⚠️ Внимание! Ожидается повышение радиационного фона."
-        ];
+        let activeUser = localStorage.getItem('stalker_v5_active') || null;
 
-        let activeUser = localStorage.getItem('stalker_active_user') || null;
-
-        /* ------------------------------------------
-           АУДИО СИСТЕМА (Звуки КПК)
-           ------------------------------------------ */
-        function playPdaSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, ctx.currentTime);
-                gain.gain.setValueAtTime(0.05, ctx.currentTime);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.04);
-            } catch (e) {}
+        // Фильтр мата
+        const badWords = ["мат1", "мат2", "сука", "блять"]; 
+        function containsBadWords(text) {
+            return badWords.some(w => text.toLowerCase().includes(w));
         }
 
-        /* ------------------------------------------
-           ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ
-           ------------------------------------------ */
         window.onload = function() {
-            saveDatabases();
+            // Картинка карты
+            document.getElementById('zone-map-img').src = document.querySelector('object[type="image"]')?.getAttribute('name') || "https://picsum.photos/id/1018/600/400";
+            
+            saveAll();
             if (activeUser && usersDb[activeUser]) {
                 showMainApp();
             } else {
                 switchTab('auth-screen');
             }
             startEmissionTimer();
+            renderShop();
         };
 
-        function saveDatabases() {
-            localStorage.setItem('stalker_users_db', JSON.stringify(usersDb));
-            localStorage.setItem('stalker_posts_db', JSON.stringify(postsDb));
-            localStorage.setItem('stalker_notifs_db', JSON.stringify(notificationsDb));
+        function saveAll() {
+            localStorage.setItem('stalker_v5_users', JSON.stringify(usersDb));
+            localStorage.setItem('stalker_v5_posts', JSON.stringify(postsDb));
+            localStorage.setItem('stalker_v5_modQueue', JSON.stringify(modQueue));
+            localStorage.setItem('stalker_v5_clanRequests', JSON.stringify(clanRequests));
+            localStorage.setItem('stalker_v5_notifs', JSON.stringify(notifsDb));
+            localStorage.setItem('stalker_v5_active', activeUser);
         }
 
-        /* ------------------------------------------
-           АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ
-           ------------------------------------------ */
+        function playBeepSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.05);
+            } catch (e) {}
+        }
+
         function toggleAuthMode(mode) {
-            playPdaSound();
+            playBeepSound();
             if (mode === 'login') {
-                document.getElementById('btn-tab-login').classList.add('active');
-                document.getElementById('btn-tab-register').classList.remove('active');
                 document.getElementById('form-login').style.display = 'block';
                 document.getElementById('form-register').style.display = 'none';
             } else {
-                document.getElementById('btn-tab-register').classList.add('active');
-                document.getElementById('btn-tab-login').classList.remove('active');
                 document.getElementById('form-login').style.display = 'none';
                 document.getElementById('form-register').style.display = 'block';
             }
         }
 
         function handleLogin() {
-            playPdaSound();
+            playBeepSound();
             const cs = document.getElementById('login-callsign').value.trim();
             const pass = document.getElementById('login-password').value.trim();
 
-            if (!cs || !pass) return alert("Заполните все поля!");
-
             if (usersDb[cs] && usersDb[cs].password === pass) {
                 activeUser = cs;
-                localStorage.setItem('stalker_active_user', activeUser);
+                saveAll();
                 showMainApp();
             } else {
-                alert("Ошибка! Неверный позывной или пароль КПК.");
+                document.getElementById('error-screen').style.display = 'flex';
             }
         }
 
+        function closeError() {
+            document.getElementById('error-screen').style.display = 'none';
+        }
+
         function handleRegister() {
-            playPdaSound();
+            playBeepSound();
             const cs = document.getElementById('reg-callsign').value.trim();
             const pass = document.getElementById('reg-password').value.trim();
             const faction = document.getElementById('reg-faction').value;
-            const weapon = document.getElementById('reg-weapon').value;
-            const bio = document.getElementById('reg-bio').value.trim();
 
-            if (!cs || !pass) return alert("Заполните позывной и пароль!");
-            if (usersDb[cs]) return alert("Сталкер с таким позывным уже зарегистрирован!");
+            if (!cs || !pass) return alert("Заполните данные!");
+            if (usersDb[cs]) return alert("Позывной занят!");
 
             usersDb[cs] = {
                 callsign: cs,
                 password: pass,
                 faction: faction,
-                weapon: weapon,
-                bio: bio || "Новичок в ЧЗО.",
-                money: 5000,
-                karma: 0,
-                followers: 0,
-                commentsCount: 0,
-                inventory: ["ПДА Новичка", "Аптечка"]
+                isLeader: false,
+                weapon: "ПМ",
+                money: 3000,
+                approvedPosts: 0,
+                avatar: defaultAvatars[1],
+                inventory: ["ПМ"]
             };
 
-            saveDatabases();
             activeUser = cs;
-            localStorage.setItem('stalker_active_user', activeUser);
+            saveAll();
             showMainApp();
         }
 
         function handleLogout() {
-            playPdaSound();
+            playBeepSound();
             activeUser = null;
-            localStorage.removeItem('stalker_active_user');
+            localStorage.removeItem('stalker_v5_active');
             document.getElementById('main-nav').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'none';
             switchTab('auth-screen');
         }
 
-        /* ------------------------------------------
-           ОБНОБЛЕНИЕ ИНТЕРФЕЙСА ПРИ ВХОДЕ
-           ------------------------------------------ */
         function showMainApp() {
             document.getElementById('auth-screen').classList.remove('active');
             document.getElementById('main-nav').style.display = 'flex';
+
+            if (activeUser === "Стрелок") {
+                document.getElementById('admin-mod-panel').style.display = 'block';
+            } else {
+                document.getElementById('admin-mod-panel').style.display = 'none';
+            }
 
             renderProfile();
             renderPosts();
             renderStalkersList();
             renderClansList();
+            renderModerationQueue();
             renderNotifications();
-
-            // Проверка прав Администратора
-            let cleanUser = activeUser.toLowerCase().replace('@', '');
-            if (cleanUser === "admin" || cleanUser === "ovchinnikov") {
-                document.getElementById('admin-panel').style.display = 'block';
-            } else {
-                document.getElementById('admin-panel').style.display = 'none';
-            }
-
             switchTab('feed');
         }
 
         function switchTab(tabId) {
-            playPdaSound();
+            playBeepSound();
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-            if (tabId === 'auth-screen') {
-                document.getElementById('auth-screen').classList.add('active');
+            const target = document.getElementById(tabId + '-tab');
+            if (target) target.classList.add('active');
+        }
+
+        /* ПОСТЫ И МОДЕРАЦИЯ */
+        function submitNewPost() {
+            playBeepSound();
+            const img = document.getElementById('post-img-input').value.trim();
+            const text = document.getElementById('post-text-input').value.trim();
+
+            if (!text) return alert("Введите текст!");
+            if (containsBadWords(text)) return alert("Обнаружен мат! Публикация отклонена.");
+
+            modQueue.push({
+                id: Date.now(),
+                author: activeUser,
+                img: img || null,
+                text: text
+            });
+
+            saveAll();
+            alert("Пост отправлен на модерацию!");
+            document.getElementById('post-text-input').value = '';
+            switchTab('feed');
+            renderModerationQueue();
+        }
+
+        function renderModerationQueue() {
+            const list = document.getElementById('moderation-posts-list');
+            list.innerHTML = '';
+
+            if (modQueue.length === 0) {
+                list.innerHTML = '<div style="font-size:10px; color:#aaa;">Нет постов на модерацию.</div>';
                 return;
             }
 
-            const targetTab = document.getElementById(tabId + '-tab');
-            if (targetTab) targetTab.classList.add('active');
-
-            // Подсветка кнопок меню
-            const navMap = {
-                'feed': 0, 'search': 1, 'clans': 2, 'map': 3, 'shop': 4, 'dossier': 5
-            };
-            if (navMap[tabId] !== undefined) {
-                document.querySelectorAll('.nav-item')[navMap[tabId]].classList.add('active');
-            }
+            modQueue.forEach((p, idx) => {
+                const item = document.createElement('div');
+                item.style.borderBottom = "1px solid var(--pda-border)";
+                item.style.padding = "6px 0";
+                item.innerHTML = `
+                    <div style="font-size:11px;"><b>${p.author}:</b> ${p.text}</div>
+                    <div style="display:flex; gap:6px; margin-top:4px;">
+                        <button class="btn-pda" style="padding:2px 6px; font-size:9px;" onclick="approvePost(${idx})">Одобрить (+1000 руб)</button>
+                        <button class="btn-pda btn-pda-red" style="padding:2px 6px; font-size:9px;" onclick="rejectPost(${idx})">Отклонить</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
         }
 
-        /* ------------------------------------------
-           ЛОГИКА ВЫЛАЗОК И ЛЕНТЫ ПОСТОВ
-           ------------------------------------------ */
+        function approvePost(idx) {
+            playBeepSound();
+            const p = modQueue[idx];
+            postsDb.unshift({
+                id: p.id,
+                author: p.author,
+                faction: usersDb[p.author]?.faction || "Одиночки",
+                avatar: usersDb[p.author]?.avatar || defaultAvatars[0],
+                img: p.img,
+                text: p.text
+            });
+
+            if (usersDb[p.author]) {
+                usersDb[p.author].money += 1000;
+                usersDb[p.author].approvedPosts += 1;
+            }
+
+            modQueue.splice(idx, 1);
+            saveAll();
+            renderModerationQueue();
+            renderPosts();
+            renderProfile();
+        }
+
+        function rejectPost(idx) {
+            playBeepSound();
+            modQueue.splice(idx, 1);
+            saveAll();
+            renderModerationQueue();
+        }
+
         function renderPosts() {
             const container = document.getElementById('posts-container');
             container.innerHTML = '';
 
-            postsDb.forEach(post => {
+            postsDb.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'post-card';
                 card.innerHTML = `
                     <div class="post-header">
-                        <div>
-                            <span class="post-author">${post.author}</span>
-                            <span class="post-faction">[${post.faction}]</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div class="avatar-box" style="width:30px; height:30px;"><img src="${p.avatar}"></div>
+                            <b>${p.author}</b> <small style="color:var(--pda-gold);">[${p.faction}]</small>
                         </div>
-                        <small style="color:var(--pda-gray);">${post.time}</small>
+                        ${(p.author === activeUser || activeUser === "Стрелок") ? `<button class="btn-pda btn-pda-red" style="width:auto; padding:2px 6px; font-size:9px;" onclick="deletePost(${p.id})">Удалить</button>` : ''}
                     </div>
-                    ${post.img ? `<img src="${post.img}" class="post-img">` : ''}
-                    <div class="post-body">${post.text}</div>
-                    <div class="post-actions">
-                        <button class="action-btn" onclick="addKarmaPost(${post.id}, this)">
-                            ☢️ + в карму (<span class="k-cnt">${post.karma}</span>)
-                        </button>
-                        <button class="action-btn" onclick="toggleComments(${post.id})">
-                            📜 Малявы (${post.comments.length})
-                        </button>
-                    </div>
-                    <div class="comments-block" id="comments-block-${post.id}">
-                        <div id="comments-list-${post.id}">
-                            ${post.comments.map(c => `<div class="comment-item"><b>${c.author}:</b> ${c.text}</div>`).join('')}
-                        </div>
-                        <div style="display: flex; gap: 4px; margin-top: 8px;">
-                            <input type="text" id="comm-input-${post.id}" class="pda-input" style="margin:0;" placeholder="Написать маляву...">
-                            <button class="btn-pda" style="width: auto;" onclick="sendComment(${post.id})">Отправить</button>
-                        </div>
-                    </div>
+                    ${p.img ? `<img src="${p.img}" class="post-img">` : ''}
+                    <div class="post-body">${p.text}</div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function addKarmaPost(postId, btn) {
-            playPdaSound();
-            const post = postsDb.find(p => p.id === postId);
-            if (post) {
-                post.karma += 1;
-                btn.querySelector('.k-cnt').innerText = post.karma;
-                saveDatabases();
-            }
-        }
-
-        function toggleComments(postId) {
-            playPdaSound();
-            const block = document.getElementById(`comments-block-${postId}`);
-            block.style.display = block.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function sendComment(postId) {
-            playPdaSound();
-            const input = document.getElementById(`comm-input-${postId}`);
-            const text = input.value.trim();
-            if (!text) return;
-
-            const post = postsDb.find(p => p.id === postId);
-            if (post) {
-                post.comments.push({ author: activeUser, text: text });
-                usersDb[activeUser].commentsCount += 1;
-                saveDatabases();
-                renderPosts();
-                renderProfile();
-            }
-        }
-
-        function submitNewPost() {
-            playPdaSound();
-            const img = document.getElementById('post-img-input').value.trim();
-            const text = document.getElementById('post-text-input').value.trim();
-
-            if (!text) return alert("Введите текст сообщения!");
-
-            const u = usersDb[activeUser];
-            const newPost = {
-                id: Date.now(),
-                author: u.callsign,
-                faction: u.faction,
-                time: "Только что",
-                img: img || null,
-                text: text,
-                karma: 0,
-                comments: []
-            };
-
-            postsDb.unshift(newPost);
-            saveDatabases();
-
-            document.getElementById('post-img-input').value = '';
-            document.getElementById('post-text-input').value = '';
-
+        function deletePost(id) {
+            playBeepSound();
+            postsDb = postsDb.filter(p => p.id !== id);
+            saveAll();
             renderPosts();
-            switchTab('feed');
         }
 
-        /* ------------------------------------------
-           ПРОФИЛЬ И ИНВЕНТАРЬ
-           ------------------------------------------ */
+        /* ПРОФИЛЬ И АВАТАРКА */
         function renderProfile() {
             const u = usersDb[activeUser];
             if (!u) return;
 
             document.getElementById('prof-callsign').innerText = u.callsign;
             document.getElementById('prof-faction').innerText = u.faction;
-            document.getElementById('prof-weapon').innerText = u.weapon;
-            document.getElementById('prof-followers').innerText = u.followers;
             document.getElementById('prof-money').innerText = u.money.toLocaleString() + ' руб.';
-            document.getElementById('prof-karma').innerText = u.karma;
-            document.getElementById('prof-comments').innerText = u.commentsCount;
-            document.getElementById('prof-bio').innerText = u.bio || "Биография не указана.";
+            document.getElementById('prof-posts-cnt').innerText = u.approvedPosts;
+            document.getElementById('prof-avatar-img').src = u.avatar;
             document.getElementById('shop-balance').innerText = u.money.toLocaleString() + ' руб.';
 
-            const invBox = document.getElementById('prof-inventory');
-            if (u.inventory && u.inventory.length > 0) {
-                invBox.innerHTML = u.inventory.map(i => `• ${i}`).join('<br>');
-            } else {
-                invBox.innerHTML = "Рюкзак пуст.";
+            document.getElementById('prof-inventory').innerHTML = u.inventory.map(i => `• ${i}`).join('<br>') || "Пусто";
+
+            // Мои посты
+            const myPosts = postsDb.filter(p => p.author === activeUser);
+            document.getElementById('my-posts-list').innerHTML = myPosts.map(p => `<div style="font-size:10px; border-bottom:1px solid #112211; padding:2px 0;">${p.text}</div>`).join('') || "Нет вылазок.";
+        }
+
+        function changeAvatarPrompt() {
+            playBeepSound();
+            const url = prompt("Введите ссылку на фото для аватарки:");
+            if (url) {
+                usersDb[activeUser].avatar = url;
+                saveAll();
+                renderProfile();
             }
         }
 
-        function buyItem(itemName, price) {
-            playPdaSound();
-            const u = usersDb[activeUser];
-            if (u.money < price) {
-                return alert("Недостаточно рублей на счету КПК!");
-            }
-            u.money -= price;
-            u.inventory.push(itemName);
-            saveDatabases();
-            renderProfile();
-            alert(`Успешно куплено: ${itemName}`);
-        }
-
-        /* ------------------------------------------
-           СПИСОК ИГРОКОВ И КЛАНЫ
-           ------------------------------------------ */
-        function renderStalkersList() {
-            const container = document.getElementById('stalkers-list-container');
-            const search = document.getElementById('search-input').value.toLowerCase();
-            container.innerHTML = '';
-
-            Object.keys(usersDb).forEach(key => {
-                const u = usersDb[key];
-                if (u.callsign.toLowerCase().includes(search)) {
-                    const div = document.createElement('div');
-                    div.className = 'user-item';
-                    div.innerHTML = `
-                        <div>
-                            <div class="user-info-title">${u.callsign} [${u.faction}]</div>
-                            <div class="user-info-sub">Оружие: ${u.weapon} | Бойцов: ${u.followers}</div>
-                        </div>
-                        <button class="btn-pda" style="width: auto; padding: 4px 8px; font-size: 10px;" onclick="toggleFollowStalker('${u.callsign}')">
-                            В отряд
-                        </button>
-                    `;
-                    container.appendChild(div);
-                }
-            });
-        }
-
-        function toggleFollowStalker(targetCallsign) {
-            playPdaSound();
-            if (usersDb[targetCallsign]) {
-                usersDb[targetCallsign].followers += 1;
-                saveDatabases();
-                renderStalkersList();
-                alert(`Вы вступили в отряд сталкера ${targetCallsign}!`);
-            }
-        }
-
+        /* КЛАНЫ */
         function renderClansList() {
             const container = document.getElementById('clans-list');
-            const clans = [
-                { name: "Одиночки", desc: "Вольные сталкеры Зоны" },
-                { name: "Долг", desc: "Защита мира от заразы Зоны" },
-                { name: "Свобода", desc: "Свободный доступ к тайнам ЧЗО" },
-                { name: "Монолит", desc: "Защитники Монолита" },
-                { name: "Учёные", desc: "Исследования и наука" }
-            ];
+            const clans = ["Долг", "Свобода", "Монолит", "Одиночки"];
 
             container.innerHTML = clans.map(c => `
-                <div class="user-item">
-                    <div>
-                        <div class="user-info-title">[${c.name}]</div>
-                        <div class="user-info-sub">${c.desc}</div>
-                    </div>
-                    <button class="btn-pda" style="width: auto; padding: 4px 8px; font-size: 10px;" onclick="applyClan('${c.name}')">
-                        Вступить
-                    </button>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid var(--pda-border);">
+                    <div><b>[${c}]</b></div>
+                    <button class="btn-pda" style="width:auto; padding:4px 8px;" onclick="applyClan('${c}')">Подать заявку</button>
                 </div>
             `).join('');
         }
 
         function applyClan(clanName) {
-            playPdaSound();
-            usersDb[activeUser].faction = clanName;
-            saveDatabases();
+            playBeepSound();
+            const u = usersDb[activeUser];
+            if (activeUser !== "Стрелок" && u.approvedPosts < 10) {
+                return alert("Ошибка! Нужно иметь минимум 10 одобренных постов для вступления в клан!");
+            }
+            alert(`Заявка в группировку [${clanName}] отправлена на одобрение Лидеру!`);
+        }
+
+        /* РЫНОК */
+        function renderShop() {
+            const items = [
+                { name: "АК-74М", price: 12000 },
+                { name: "ВСС Винторез", price: 45000 },
+                { name: "Гаусс-пушка", price: 120000 },
+                { name: "Аптечка", price: 1000 }
+            ];
+
+            document.getElementById('shop-grid-items').innerHTML = items.map(i => `
+                <div class="shop-item">
+                    <div><b>${i.name}</b></div>
+                    <div style="color:var(--pda-gold); font-size:10px;">${i.price} руб.</div>
+                    <button class="btn-pda" style="padding:2px; font-size:9px;" onclick="buyWeapon('${i.name}', ${i.price})">Купить</button>
+                </div>
+            `).join('');
+        }
+
+        function buyWeapon(name, price) {
+            playBeepSound();
+            const u = usersDb[activeUser];
+            if (u.money < price) return alert("Недостаточно денег!");
+
+            u.money -= price;
+            u.inventory.push(name);
+            saveAll();
             renderProfile();
-            alert(`Вы успешно вступили в группировку [${clanName}]!`);
+            alert(`Куплено: ${name}`);
         }
 
-        /* ------------------------------------------
-           КАРТА И СКАНЕР АНОМАЛИЙ
-           ------------------------------------------ */
-        function scanAnomaly() {
-            playPdaSound();
-            const res = document.getElementById('scan-result');
-            res.innerText = "Сканирование частот ЧЗО...";
-            setTimeout(() => {
-                const items = ["Найден артефакт 'Медуза'!", "Чисто: аномалий не обнаружено.", "⚠️ ВНИМАНИЕ! Высокий уровень радиации!", "Найден артефакт 'Огненный шар'!"];
-                const rand = items[Math.floor(Math.random() * items.length)];
-                res.innerText = rand;
-            }, 1200);
+        function renderStalkersList() {
+            const container = document.getElementById('stalkers-list-container');
+            container.innerHTML = Object.keys(usersDb).map(k => `
+                <div style="padding:6px; border-bottom:1px solid var(--pda-border); font-size:11px;">
+                    <b>${usersDb[k].callsign}</b> [${usersDb[k].faction}]
+                </div>
+            `).join('');
         }
 
-        /* ------------------------------------------
-           УВЕДОМЛЕНИЯ И ТАЙМЕР ВЫБРОСА
-           ------------------------------------------ */
         function renderNotifications() {
-            const container = document.getElementById('notif-list');
-            container.innerHTML = notificationsDb.map(n => `<div style="border-bottom: 1px solid var(--pda-border); padding: 6px 0;">${n}</div>`).join('');
-            document.getElementById('notif-count').innerText = notificationsDb.length;
+            document.getElementById('notif-list').innerHTML = notifsDb.map(n => `<div style="padding:4px 0; border-bottom:1px solid var(--pda-border);">${n}</div>`).join('');
         }
 
+        /* ВЫБРОС РАЗ В 3 ЧАСА */
         function startEmissionTimer() {
-            let minutes = 2, seconds = 45;
             setInterval(() => {
-                seconds--;
-                if (seconds < 0) {
-                    seconds = 59;
-                    minutes--;
-                }
-                if (minutes < 0) {
-                    minutes = 15;
-                    seconds = 0;
-                    notificationsDb.prepend("🚨 Внимание! НАЧАЛСЯ ВЫБРОС! Срочно найдите укрытие!");
-                    renderNotifications();
-                }
-                const mStr = minutes < 10 ? '0' + minutes : minutes;
-                const sStr = seconds < 10 ? '0' + seconds : seconds;
-                document.getElementById('emission-timer').innerText = `ДО ВЫБРОСА: ${mStr}:${sStr}`;
-            }, 1000);
-        }
-
-        /* ------------------------------------------
-           АДМИН-ФУНКЦИИ (Для @ovchinnikov)
-           ------------------------------------------ */
-        function adminAddMoney() {
-            playPdaSound();
-            usersDb[activeUser].money += 50000;
-            saveDatabases();
-            renderProfile();
-        }
-
-        function adminAddKarma() {
-            playPdaSound();
-            usersDb[activeUser].karma += 1000;
-            saveDatabases();
-            renderProfile();
-        }
-
-        function adminAddFollowers() {
-            playPdaSound();
-            usersDb[activeUser].followers += 500;
-            saveDatabases();
-            renderProfile();
-        }
-
-        function adminBanUser() {
-            playPdaSound();
-            const target = prompt("Введите позывной сталкера для БАНА:");
-            if (target && usersDb[target]) {
-                delete usersDb[target];
-                saveDatabases();
-                renderStalkersList();
-                alert(`Сталкер ${target} был заблокирован и удален из сети КПК!`);
-            } else if (target) {
-                alert("Сталкер не найден!");
-            }
-        }
-
-        function adminBroadcast() {
-            playPdaSound();
-            const msg = prompt("Введите текст экстренного сообщения по всей ЧЗО:");
-            if (msg) {
-                notificationsDb.unshift(`📢 [ОБЩЕЕ ОПОВЕЩЕНИЕ АДМИНИСТРАЦИИ]: ${msg}`);
-                saveDatabases();
-                renderNotifications();
-                alert("Сообщение отправлено всем сталкерам!");
-            }
+                const overlay = document.getElementById('emission-overlay');
+                overlay.style.display = 'block';
+                overlay.style.animation = 'emissionFlash 2s infinite';
+                playBeepSound();
+                setTimeout(() => { overlay.style.display = 'none'; }, 6000);
+            }, 10800000); // 3 часа
         }
     </script>
 </body>
