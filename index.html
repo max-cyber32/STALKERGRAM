@@ -11,16 +11,12 @@
             --pda-green: #00ff66;
             --pda-dark-green: #0a180a;
             --pda-gold: #ffcc00;
-            --pda-orange: #ff9900;
             --pda-text-gray: #8a968a;
             --pda-border: #1a331a;
             --pda-panel-bg: #0c140c;
         }
 
-        * {
-            box-sizing: border-box;
-            user-select: none;
-        }
+        * { box-sizing: border-box; user-select: none; }
 
         body {
             background-color: var(--pda-bg);
@@ -28,10 +24,10 @@
             font-family: 'Courier New', monospace;
             margin: 0;
             padding: 0;
-            padding-bottom: 75px;
+            padding-bottom: 80px;
         }
 
-        /* Декоративные саморезы/болты */
+        /* Металлические саморезы */
         .screw {
             width: 8px;
             height: 8px;
@@ -56,7 +52,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.8);
         }
 
         .header-title {
@@ -77,9 +72,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
-            box-shadow: 0 0 6px rgba(255, 204, 0, 0.4);
         }
 
         .signal-badge {
@@ -107,13 +101,13 @@
             50% { opacity: 0.2; }
         }
 
-        /* Навигация (приподнята вверх) */
+        /* Нижнее меню (приподнято) */
         .pda-nav {
             position: fixed;
-            bottom: 8px;
+            bottom: 12px;
             left: 8px;
             right: 8px;
-            height: 58px;
+            height: 56px;
             background: #050905;
             border: 2px solid var(--pda-border);
             border-radius: 8px;
@@ -121,7 +115,6 @@
             justify-content: space-around;
             align-items: center;
             z-index: 1000;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.9);
             padding: 0 4px;
         }
 
@@ -129,7 +122,7 @@
             background: transparent;
             border: 1px solid transparent;
             color: var(--pda-text-gray);
-            font-size: 10px;
+            font-size: 11px;
             padding: 6px 2px;
             border-radius: 4px;
             cursor: pointer;
@@ -143,19 +136,13 @@
             color: var(--pda-green);
             border-color: var(--pda-green);
             background: var(--pda-dark-green);
-            box-shadow: 0 0 8px rgba(0,255,102,0.2);
         }
 
-        /* Контейнеры Вкладок */
-        .tab-content {
-            display: none;
-            padding: 10px;
-        }
-        .tab-content.active {
-            display: block;
-        }
+        /* Контейнеры вкладок */
+        .tab-content { display: none; padding: 10px; }
+        .tab-content.active { display: block; }
 
-        /* Карточка с крепежом (саморезами) */
+        /* Панель с саморезами */
         .bolted-panel {
             background: var(--pda-panel-bg);
             border: 2px solid var(--pda-border);
@@ -170,20 +157,14 @@
         .bolted-panel .screw-bl { position: absolute; bottom: 4px; left: 4px; }
         .bolted-panel .screw-br { position: absolute; bottom: 4px; right: 4px; }
 
-        /* Экраны Входа / Регистрации */
-        .auth-container {
-            text-align: center;
-            padding: 30px 15px;
-        }
-
         .pda-input {
             width: 100%;
             background: #000;
             border: 1px solid var(--pda-green);
             color: var(--pda-green);
-            padding: 10px;
+            padding: 8px;
             font-family: inherit;
-            margin: 10px 0;
+            margin: 8px 0;
             border-radius: 4px;
             outline: none;
         }
@@ -192,44 +173,33 @@
             background: var(--pda-dark-green);
             border: 1px solid var(--pda-green);
             color: var(--pda-green);
-            padding: 10px 14px;
+            padding: 8px 12px;
             width: 100%;
             font-family: inherit;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 6px;
-        }
-        .btn-pda:active {
-            background: var(--pda-green);
-            color: #000;
         }
 
-        /* Посты и Комментарии (Малявы) */
+        /* Посты и Малявы */
         .post-card {
             background: #090f09;
             border: 1px solid var(--pda-border);
             border-radius: 6px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             overflow: hidden;
         }
 
         .post-header {
-            padding: 8px 10px;
+            padding: 8px;
             background: #040704;
             display: flex;
             justify-content: space-between;
-            align-items: center;
             font-size: 12px;
             border-bottom: 1px solid var(--pda-border);
         }
 
-        .post-img {
-            width: 100%;
-            max-height: 320px;
-            object-fit: cover;
-            display: block;
-        }
+        .post-img { width: 100%; max-height: 280px; object-fit: cover; display: block; }
 
         .post-actions {
             padding: 8px;
@@ -246,26 +216,22 @@
             cursor: pointer;
             font-family: inherit;
             font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
         .action-btn.active { color: var(--pda-gold); }
 
         .comments-section {
             background: #050805;
             border-top: 1px dashed var(--pda-border);
-            padding: 8px 10px;
+            padding: 8px;
             display: none;
         }
         .comment-item {
             font-size: 11px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             border-bottom: 1px dotted #152515;
-            padding-bottom: 4px;
+            padding-bottom: 2px;
         }
 
-        /* Элемент Поиска Людей */
         .user-search-item {
             display: flex;
             justify-content: space-between;
@@ -277,19 +243,18 @@
             border-radius: 4px;
         }
 
-        /* Панель Главного Админа */
         .admin-panel {
             border: 2px solid var(--pda-gold);
             background: #121000;
             padding: 10px;
             border-radius: 6px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
     </style>
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ШАПКА КПК -->
+    <!-- ШАПКА КПК -->
     <div class="pda-header">
         <div class="header-title">
             <div class="rad-icon">☢</div>
@@ -301,16 +266,16 @@
         </div>
     </div>
 
-    <!-- 0. ЭКРАН РЕГИСТРАЦИИ И ВХОДА -->
+    <!-- 0. ЭКРАН ВХОДА -->
     <div id="auth-screen" class="tab-content active">
-        <div class="bolted-panel auth-container">
+        <div class="bolted-panel" style="text-align: center; padding: 25px 15px;">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
             <div class="screw screw-bl"></div><div class="screw screw-br"></div>
             
-            <h3 style="color: var(--pda-gold); margin-top: 0;">📟 ИНДЕНТИФИКАЦИЯ КПК</h3>
-            <p style="font-size: 11px; color: var(--pda-text-gray);">Введи свой уникальный позывной для входа в сеть ЧЗО:</p>
+            <h3 style="color: var(--pda-gold); margin: 0 0 10px 0;">📟 ИНДЕНТИФИКАЦИЯ КПК</h3>
+            <p style="font-size: 11px; color: var(--pda-text-gray);">Введи свой позывной (для прав админа введи: admin):</p>
             
-            <input type="text" id="callsign-input" class="pda-input" placeholder="Позывной (например: Меченый)" maxlength="20">
+            <input type="text" id="callsign-input" class="pda-input" placeholder="Позывной..." maxlength="20">
             <div id="auth-error" style="color: #ff4444; font-size: 11px; display: none; margin-bottom: 8px;"></div>
             
             <button class="btn-pda" onclick="registerUser()">ВОЙТИ В СЕТЬ</button>
@@ -319,14 +284,14 @@
 
     <!-- 1. ОБЩИЙ КАНАЛ (ЛЕНТА) -->
     <div id="feed-tab" class="tab-content">
-        <div class="bolted-panel" style="padding: 6px 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+        <div class="bolted-panel" style="padding: 6px 10px; display: flex; justify-content: space-between; align-items: center;">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
-            <span style="font-size: 11px; color: var(--pda-gold);">📡 ЛЕНТА ВЫЛАЗОК</span>
-            <button class="btn-pda" style="width: auto; padding: 4px 8px; font-size: 10px; margin:0;" onclick="switchTab('create-post')">📸 ВЫЛАЗКА</button>
+            <span style="font-size: 11px; color: var(--pda-gold);">📡 ОБЩИЙ КАНАЛ</span>
+            <button class="btn-pda" style="width: auto; padding: 4px 8px; font-size: 10px;" onclick="switchTab('create-post')">📸 ВЫЛАЗКА</button>
         </div>
 
         <div id="posts-container">
-            <!-- Пример поста в ленте -->
+            <!-- Пост 1 -->
             <div class="post-card">
                 <div class="post-header">
                     <span><b>Меченый</b> <small style="color:var(--pda-text-gray)">[Одиночка]</small></span>
@@ -334,49 +299,48 @@
                 </div>
                 <img src="https://via.placeholder.com/400x240/112211/00ff66?text=Вылазка+в+Темную+Долину" class="post-img">
                 <div style="padding: 8px; font-size: 12px;">
-                    Переждали выброс на заброшенной ферме. Взяли пару "ночных звезд".
+                    Переждали выброс на заброшенной ферме. Взяли пару редких артефактов.
                 </div>
                 <div class="post-actions">
                     <button class="action-btn" onclick="toggleKarma(this)">☢️ + в карму (<span class="karma-cnt">15</span>)</button>
                     <button class="action-btn" onclick="toggleComments('comments-1')">📜 Малява (<span class="comm-cnt">2</span>)</button>
                 </div>
                 
-                <!-- Секция Маляв (Комментариев) -->
+                <!-- Малявы -->
                 <div id="comments-1" class="comments-section">
                     <div id="comm-list-1">
-                        <div class="comment-item"><b>Шустрый:</b> За сколько отдашь артефакт?</div>
+                        <div class="comment-item"><b>Шустрый:</b> За сколько отдашь хабар?</div>
                         <div class="comment-item"><b>Меченый:</b> Сидорович уже забронировал.</div>
                     </div>
                     <div style="display: flex; gap: 4px; margin-top: 6px;">
-                        <input type="text" id="input-comm-1" class="pda-input" style="margin:0; padding:4px 8px; font-size:11px;" placeholder="Оставить маляву...">
-                        <button class="btn-pda" style="width:auto; margin:0; padding:4px 8px; font-size:10px;" onclick="addComment(1)">Отправить</button>
+                        <input type="text" id="input-comm-1" class="pda-input" style="margin:0; padding:4px; font-size:11px;" placeholder="Написать маляву...">
+                        <button class="btn-pda" style="width:auto; padding:4px 8px; font-size:10px;" onclick="addComment(1)">Отправить</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 2. ПОИСК СТАЛКЕРОВ (ПОИСК ЛЮДЕЙ И БОЙЦОВ) -->
+    <!-- 2. ПОИСК ЛЮДЕЙ -->
     <div id="search-tab" class="tab-content">
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
             <div class="screw screw-bl"></div><div class="screw screw-br"></div>
-            <span style="font-size: 11px; color: var(--pda-gold);">🔍 ПОИСК СТАЛКЕРОВ В СЕТИ</span>
-            <input type="text" id="search-input" class="pda-input" placeholder="Поиск по позывному..." oninput="filterStalkers()">
+            <span style="font-size: 11px; color: var(--pda-gold);">🔍 ПОИСК СТАЛКЕРОВ</span>
+            <input type="text" id="search-input" class="pda-input" placeholder="Позывной..." oninput="filterStalkers()">
         </div>
 
         <div id="search-results">
-            <!-- Пример найденного сталкера -->
             <div class="user-search-item">
                 <div>
-                    <b>Шустрый</b> <br>
+                    <b>Шустрый</b><br>
                     <small style="color: var(--pda-text-gray);">Бойцов: <span class="followers-count">42</span></small>
                 </div>
                 <button class="btn-pda" style="width: auto; padding: 4px 10px; font-size: 10px;" onclick="toggleFollow(this)">Вступить в отряд</button>
             </div>
             <div class="user-search-item">
                 <div>
-                    <b>Волк</b> <br>
+                    <b>Волк</b><br>
                     <small style="color: var(--pda-text-gray);">Бойцов: <span class="followers-count">128</span></small>
                 </div>
                 <button class="btn-pda" style="width: auto; padding: 4px 10px; font-size: 10px;" onclick="toggleFollow(this)">Вступить в отряд</button>
@@ -386,12 +350,10 @@
 
     <!-- 3. ДОСЬЕ (ПРОФИЛЬ) -->
     <div id="dossier-tab" class="tab-content">
-        
-        <!-- ПАНЕЛЬ ГЛАВНОГО АДМИНА (Отображается только Админу) -->
+        <!-- АДМИН ПАНЕЛЬ -->
         <div id="admin-panel" class="admin-panel" style="display: none;">
             <b style="color: var(--pda-gold);">👑 ПАНЕЛЬ ГЛАВНОГО АДМИНА</b>
-            <div style="font-size: 10px; color: #aaa; margin-bottom: 6px;">Выдача ресурсов и управление сетью:</div>
-            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 4px; margin-top: 6px;">
                 <button class="btn-pda" style="font-size: 9px; padding: 4px;" onclick="adminAddKarma()">+1000 Кармы</button>
                 <button class="btn-pda" style="font-size: 9px; padding: 4px;" onclick="adminAddFollowers()">+500 Бойцов</button>
                 <button class="btn-pda" style="font-size: 9px; padding: 4px;" onclick="adminAddExp()">+500 EXP</button>
@@ -403,49 +365,48 @@
             <div class="screw screw-bl"></div><div class="screw screw-br"></div>
 
             <div style="display: flex; gap: 12px; border-bottom: 1px dashed var(--pda-border); padding-bottom: 10px; margin-bottom: 10px;">
-                <div style="width: 80px; height: 95px; border: 1px solid var(--pda-green); background: #112211; display:flex; align-items:center; justify-content:center; color:var(--pda-green); font-size:30px;">
+                <div style="width: 70px; height: 85px; border: 1px solid var(--pda-green); background: #112211; display:flex; align-items:center; justify-content:center; color:var(--pda-green); font-size:28px;">
                     👤
                 </div>
                 <div>
-                    <div id="profile-name" style="font-size: 18px; color: #fff; font-weight: bold;">-</div>
+                    <div id="profile-name" style="font-size: 16px; color: #fff; font-weight: bold;">-</div>
                     <div style="font-size: 11px; color: var(--pda-text-gray);">Ранг: <span style="color:#fff">Новичок</span></div>
                     <div style="font-size: 11px; color: var(--pda-text-gray);">Группа: <span style="color:#fff">Одиночка</span></div>
-                    <div style="font-size: 11px; color: var(--pda-text-gray);">Бойцов (подписчиков): <b id="profile-followers" style="color:var(--pda-gold);">0</b></div>
+                    <div style="font-size: 11px; color: var(--pda-text-gray);">Бойцов: <b id="profile-followers" style="color:var(--pda-gold);">0</b></div>
                 </div>
             </div>
 
-            <div style="color: var(--pda-gold); font-size: 14px; font-weight: bold; margin-bottom: 6px;">Статистика</div>
+            <div style="color: var(--pda-gold); font-size: 13px; font-weight: bold; margin-bottom: 6px;">Статистика</div>
             <div style="font-size: 11px;">
-                <div style="display:flex; justify-content:space-between; padding: 3px 0;"><span>+ в карму:</span> <b id="profile-karma">0</b></div>
-                <div style="display:flex; justify-content:space-between; padding: 3px 0;"><span>Маляв оставлено:</span> <b id="profile-comments">0</b></div>
-                <div style="display:flex; justify-content:space-between; padding: 3px 0;"><span>Опыт (EXP):</span> <b id="profile-exp">0 EXP</b></div>
+                <div style="display:flex; justify-content:space-between; padding: 2px 0;"><span>+ в карму:</span> <b id="profile-karma">0</b></div>
+                <div style="display:flex; justify-content:space-between; padding: 2px 0;"><span>Маляв отправлено:</span> <b id="profile-comments">0</b></div>
+                <div style="display:flex; justify-content:space-between; padding: 2px 0;"><span>Опыт (EXP):</span> <b id="profile-exp">0 EXP</b></div>
             </div>
 
-            <button class="btn-pda" onclick="switchTab('settings')">⚙️ НАСТРОЙКИ КПК</button>
+            <button class="btn-pda" style="margin-top: 10px;" onclick="switchTab('settings')">⚙️ НАСТРОЙКИ КПК</button>
         </div>
     </div>
 
-    <!-- 4. СОЗДАНИЕ ВЫЛАЗКИ (ОТПРАВКА ПОСТА) -->
+    <!-- 4. СОЗДАНИЕ ВЫЛАЗКИ -->
     <div id="create-post-tab" class="tab-content">
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
             <div class="screw screw-bl"></div><div class="screw screw-br"></div>
             <span style="font-size: 11px; color: var(--pda-gold);">📸 НОВАЯ ВЫЛАЗКА</span>
-            <p style="font-size: 10px; color: var(--pda-text-gray);">Загрузи фото через Telegram-чат для отправки в Общий канал.</p>
-            <textarea id="post-caption" class="pda-input" rows="3" placeholder="Описание вылазки..."></textarea>
-            <button class="btn-pda" onclick="submitPost()">ОТПРАВИТЬ НА МОДЕРАЦИЮ</button>
+            <textarea id="post-caption" class="pda-input" rows="3" placeholder="Описание вылазки..." style="margin-top:10px;"></textarea>
+            <button class="btn-pda" onclick="submitPost()">ОТПРАВИТЬ В ОБЩИЙ КАНАЛ</button>
         </div>
     </div>
 
-    <!-- 5. НАСТРОЙКИ КПК -->
+    <!-- 5. НАСТРОЙКИ -->
     <div id="settings-tab" class="tab-content">
         <div class="bolted-panel">
             <div class="screw screw-tl"></div><div class="screw screw-tr"></div>
             <div class="screw screw-bl"></div><div class="screw screw-br"></div>
             <span style="font-size: 11px; color: var(--pda-gold);">⚙️ НАСТРОЙКИ КПК</span>
             
-            <div style="margin-top: 12px; font-size: 12px;">
-                <label>Язык интерфейса:</label>
+            <div style="margin: 12px 0; font-size: 12px;">
+                <label>Язык КПК:</label>
                 <select id="lang-select" class="pda-input" onchange="changeLanguage(this.value)">
                     <option value="ru">Русский</option>
                     <option value="ua">Українська</option>
@@ -457,7 +418,7 @@
         </div>
     </div>
 
-    <!-- НИЖНЕЕ МЕНЮ КПК (ПРИПОДНЯТО ВВЕРХ) -->
+    <!-- НИЖНЕЕ МЕНЮ КПК -->
     <div class="pda-nav" id="main-nav" style="display: none;">
         <button class="nav-btn active" onclick="switchTab('feed')">📡 Общий канал</button>
         <button class="nav-btn" onclick="switchTab('search')">🔍 Поиск</button>
@@ -470,21 +431,13 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // База данных в браузерной памяти КПК
         let currentUser = localStorage.getItem('stalker_callsign') || null;
-        let isKarmaAdded = false;
+        const takenCallsigns = ["меченый", "стрелок", "шрам", "волк", "шустрый", "сидорович"];
 
-        // Список уже занятых позывных
-        const takenCallsigns = ["меченый", "стрелок", "шрам", "волк", "шустрый", "сидорович", "дегтярев"];
-
-        // Инициализация
         window.onload = function() {
-            if (currentUser) {
-                showApp();
-            }
+            if (currentUser) showApp();
         };
 
-        // Регистрация
         function registerUser() {
             const input = document.getElementById('callsign-input').value.trim();
             const errDiv = document.getElementById('auth-error');
@@ -511,15 +464,13 @@
             document.getElementById('main-nav').style.display = 'flex';
             document.getElementById('profile-name').innerText = currentUser;
             
-            // Проверка на Главного Админа
-            if (currentUser.toLowerCase() === "admin" || currentUser.toLowerCase() === "главный" || (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id == 123456789)) {
+            if (currentUser.toLowerCase() === "admin" || currentUser.toLowerCase() === "главный") {
                 document.getElementById('admin-panel').style.display = 'block';
             }
 
             switchTab('feed');
         }
 
-        // Переключение вкладок КПК
         function switchTab(tabId) {
             playPdaSound();
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -541,7 +492,6 @@
             }
         }
 
-        // Лайки (+ в карму)
         function toggleKarma(btn) {
             playPdaSound();
             const cntSpan = btn.querySelector('.karma-cnt');
@@ -555,14 +505,12 @@
             }
         }
 
-        // Открытие / Скрытие Маляв (Комментариев)
         function toggleComments(commId) {
             playPdaSound();
             const sec = document.getElementById(commId);
             sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
         }
 
-        // Добавление новой Малявы
         function addComment(postId) {
             playPdaSound();
             const inp = document.getElementById(`input-comm-${postId}`);
@@ -580,7 +528,6 @@
             profComm.innerText = parseInt(profComm.innerText) + 1;
         }
 
-        // Вступить в отряд / Отписаться (Бойцы)
         function toggleFollow(btn) {
             playPdaSound();
             const cnt = btn.parentElement.querySelector('.followers-count');
@@ -596,33 +543,27 @@
             }
         }
 
-        // Отправка вылазки
         function submitPost() {
             playPdaSound();
-            alert("Вылазка отправлена Главным КПК на модерацию!");
+            alert("Вылазка опубликована в Общий канал!");
             document.getElementById('post-caption').value = '';
             switchTab('feed');
         }
 
-        // Функции Главного Админа
         function adminAddKarma() {
             let el = document.getElementById('profile-karma');
             el.innerText = parseInt(el.innerText) + 1000;
-            alert("👑 АДМИН: Выдано 1000 Кармы!");
         }
         function adminAddFollowers() {
             let el = document.getElementById('profile-followers');
             el.innerText = parseInt(el.innerText) + 500;
-            alert("👑 АДМИН: Выдано 500 Бойцов!");
         }
         function adminAddExp() {
             let el = document.getElementById('profile-exp');
             let current = parseInt(el.innerText);
             el.innerText = (current + 500) + " EXP";
-            alert("👑 АДМИН: Выдано 500 EXP!");
         }
 
-        // Языки
         function changeLanguage(lang) {
             const badge = document.getElementById('lang-signal');
             if (lang === 'ua') badge.innerText = "СИГНАЛ Є";
